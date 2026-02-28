@@ -1,0 +1,1625 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 7 · Finance Activities</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;--off-black:#111111;--dark:#1a1a1a;--mid:#2e2e2e;
+  --border:#3a3a3a;--grey:#666666;--silver:#999999;--light:#cccccc;
+  --off-white:#f0f0f0;--white:#ffffff;--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--white);min-height:100vh;overflow-x:hidden;}
+header{background:var(--white);color:var(--black);padding:3rem 2rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,var(--black) 0,var(--black) 8px,transparent 8px,transparent 16px);}
+.h-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--grey);margin-bottom:.9rem;}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,6rem);line-height:.95;letter-spacing:.02em;color:var(--black);margin-bottom:.9rem;}
+header h1 span{display:block;-webkit-text-stroke:2px var(--black);color:transparent;font-size:clamp(2rem,5vw,4rem);}
+.h-sub{font-size:.9rem;font-weight:500;color:var(--grey);max-width:500px;margin:0 auto;line-height:1.6;}
+.h-badges{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem;}
+.hbadge{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid var(--black);color:var(--black);padding:.25rem .7rem;border-radius:3px;}
+.tab-bar{display:flex;overflow-x:auto;background:var(--off-black);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:200;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:.85rem 1.3rem;font-family:'Barlow',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--grey);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--light);}
+.tab-btn.on{color:var(--white);border-bottom-color:var(--white);}
+.tab-btn.locked{color:var(--border)!important;cursor:not-allowed!important;border-bottom-color:transparent!important;}
+.tab-btn .tab-status{font-size:.6rem;margin-left:.3rem;vertical-align:middle;}
+.score-bar{background:var(--off-black);border-bottom:1px solid var(--border);padding:.55rem 1.4rem;display:flex;align-items:center;gap:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;flex-wrap:wrap;}
+.sb-label{color:var(--grey);}
+.sb-acts{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;}
+.sb-pip{width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;transition:all .3s;border:1.5px solid var(--border);color:var(--grey);background:var(--off-black);}
+.sb-pip.pip-done{background:var(--white);color:var(--black);border-color:var(--white);}
+.sb-pip.pip-active{border-color:var(--silver);color:var(--silver);}
+.sb-pip.pip-locked{opacity:.3;}
+.sb-total{margin-left:auto;color:var(--white);font-size:.75rem;}
+.pass-banner{display:none;background:var(--white);color:var(--black);border-radius:var(--r);padding:1rem 1.4rem;margin-top:1.2rem;font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:700;text-align:center;line-height:1.6;}
+.pass-banner.show{display:block;}
+.pass-banner .pb-sub{font-weight:400;font-size:.82rem;color:#555;margin-top:.3rem;}
+.btn{background:var(--white);color:var(--black);border:none;border-radius:8px;padding:.6rem 1.5rem;font-family:'Barlow',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:.75rem;margin-right:.4rem;}
+.btn:hover{background:var(--off-white);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn.btn-waiting{background:var(--border);color:var(--grey);cursor:not-allowed;}
+.btn.btn-waiting::after{content:'— place all cards first';font-size:.7rem;font-weight:400;letter-spacing:.02em;text-transform:none;margin-left:.5rem;opacity:.7;}
+.btn-outline{background:none;border:1.5px solid var(--border);color:var(--silver);border-radius:8px;padding:.6rem 1.2rem;font-family:'Barlow',sans-serif;font-size:.86rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:.75rem;margin-right:.4rem;}
+.btn-outline:hover{border-color:var(--white);color:var(--white);}
+.panel{display:none;max-width:920px;margin:0 auto;padding:2.2rem 1.4rem 5rem;}
+.panel.on{display:block;animation:fadeup .3s ease both;}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.intro{background:var(--white);color:var(--black);border-radius:var(--r);padding:1.4rem 1.6rem;margin-bottom:1.8rem;position:relative;overflow:hidden;}
+.intro::before{content:attr(data-num);position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:7rem;color:rgba(0,0,0,.06);line-height:1;pointer-events:none;}
+.intro-tag{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:.5rem;}
+.intro h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.03em;color:var(--black);margin-bottom:.4rem;}
+.intro p{font-size:.88rem;line-height:1.62;color:#444;max-width:600px;}
+.intro-meta{display:flex;gap:.6rem;margin-top:.8rem;flex-wrap:wrap;}
+.imeta{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid #ddd;color:#555;padding:.22rem .6rem;border-radius:3px;}
+.kpill{background:var(--dark);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.2rem;margin-bottom:1.4rem;display:flex;gap:.8rem;align-items:flex-start;}
+.kpill-icon{font-size:1.3rem;flex-shrink:0;margin-top:.05rem;}
+.kpill-body{font-size:.84rem;line-height:1.65;color:var(--light);}
+.kpill-body strong{color:var(--white);}
+.kpill-body .hl{display:inline-block;background:var(--white);color:var(--black);font-weight:700;padding:.02rem .35rem;border-radius:3px;font-size:.82rem;}
+.slabel{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;margin-top:2rem;display:flex;align-items:center;gap:.6rem;}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border);}
+.card{background:var(--dark);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;}
+.card-h{background:var(--mid);padding:.85rem 1.2rem;display:flex;align-items:center;gap:.7rem;border-bottom:1px solid var(--border);}
+.card-h h3{font-family:'Barlow',sans-serif;font-size:.9rem;font-weight:700;color:var(--white);}
+.card-b{padding:1.2rem;}
+.chip-pool{display:flex;flex-wrap:wrap;gap:.45rem;padding:.9rem;background:var(--off-black);border:2px dashed var(--border);border-radius:10px;min-height:52px;margin-bottom:1rem;transition:border-color .15s;}
+.chip-pool.over{border-color:var(--silver);}
+.drop-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;}
+.dzone{flex:1;min-width:140px;background:var(--off-black);border:2px dashed var(--border);border-radius:10px;padding:.8rem;min-height:110px;transition:all .15s;position:relative;}
+.dzone h4{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.65rem;padding-bottom:.35rem;border-bottom:2px solid;color:var(--silver);border-color:var(--border);pointer-events:none;}
+.dzone.over{border-color:var(--white);background:#1c1c1c;}
+.dzone.dz-debt h4{color:var(--white);border-color:var(--white);}
+.dzone.dz-equity h4{color:var(--silver);border-color:var(--silver);}
+.dzone.dz-short h4,.dzone.dz-medium h4,.dzone.dz-long h4{color:var(--light);border-color:var(--border);}
+.dzone.dz-int h4,.dzone.dz-ext h4{color:var(--light);border-color:var(--border);}
+.dzone.dz-bond h4,.dzone.dz-deben h4{color:var(--light);border-color:var(--border);}
+.chip{display:inline-block;background:var(--mid);border:1.5px solid var(--border);border-radius:8px;padding:.38rem .85rem;font-size:.8rem;font-weight:600;color:var(--light);cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;transition:border-color .15s,color .15s,transform .15s;font-family:'Barlow',sans-serif;-webkit-user-drag:element;}
+.chip:hover{border-color:var(--white);color:var(--white);transform:translateY(-2px);}
+.chip.dragging{opacity:.35;cursor:grabbing;}
+.chip.ok{border-color:#4ade80;background:#0a1f0f;color:#4ade80;cursor:default;}
+.chip.no{border-style:dashed;border-color:#f87171;color:#f87171;cursor:default;text-decoration:line-through;}
+/* ── INLINE DRAG RESULT (replaces blocking modal for drag-drop) ── */
+.drag-result{display:none;margin-top:.9rem;padding:1rem 1.2rem;border-radius:10px;animation:fadeup .3s ease;}
+.drag-result.show{display:block;}
+.drag-result.dr-pass{background:#0a1a0a;border:1.5px solid #4ade80;}
+.drag-result.dr-fail{background:#1a0a0a;border:1.5px solid #f87171;}
+.dr-top{display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem;}
+.dr-score{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;}
+.dr-pass .dr-score{color:#4ade80;}
+.dr-fail .dr-score{color:#f87171;}
+.dr-verdict{font-size:.88rem;font-weight:700;}
+.dr-pass .dr-verdict{color:#4ade80;}
+.dr-fail .dr-verdict{color:#f87171;}
+.dr-expl{font-size:.8rem;line-height:1.6;color:var(--silver);border-top:1px solid var(--border);padding-top:.6rem;margin-top:.4rem;}
+.dr-expl strong{color:var(--white);}
+.dr-actions{margin-top:.7rem;display:flex;gap:.4rem;flex-wrap:wrap;}
+.dr-retry{background:none;border:1.5px solid var(--border);color:var(--silver);border-radius:7px;padding:.4rem 1rem;font-family:'Barlow',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;}
+.dr-retry:hover{border-color:var(--white);color:var(--white);}
+.dr-continue{background:var(--white);color:var(--black);border:none;border-radius:7px;padding:.4rem 1rem;font-family:'Barlow',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;}
+.dr-continue:hover{background:var(--off-white);}
+/* ── MATCH GAME — NEUTRAL PAIRING ── */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:560px){.match-wrap{grid-template-columns:1fr;}}
+.match-col h4{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);margin-bottom:.65rem;}
+.mitem{background:var(--off-black);border:1.5px solid var(--border);border-radius:9px;padding:.65rem .9rem;margin-bottom:.5rem;font-size:.82rem;line-height:1.5;cursor:pointer;transition:all .2s;color:var(--light);}
+.mitem:hover:not(.done):not(.m-confirmed){border-color:var(--silver);}
+.mitem.sel-t{border-color:var(--white);background:#1c1c1c;color:var(--white);}
+.mitem.m-paired{border-color:var(--silver);background:#161616;color:var(--silver);cursor:pointer;}
+.mitem.m-paired:hover{border-color:var(--light);}
+.mitem.done{border-color:#4ade80;background:#0a1a0a;color:#4ade80;cursor:default;position:relative;padding-left:2rem;}
+.mitem.done::before{content:'✓';position:absolute;left:.7rem;color:#4ade80;font-weight:700;}
+.mitem.m-wrong{border-color:#f87171!important;background:#1a0808!important;color:#f87171!important;cursor:default;text-decoration:line-through;position:relative;padding-left:2rem;}
+.mitem.m-wrong::before{content:'✗';position:absolute;left:.7rem;}
+.mitem.m-confirmed{pointer-events:none;}
+.mitem.flash-no{animation:shake .35s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.match-instructions{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--silver);margin-bottom:.8rem;padding:.5rem .8rem;background:var(--off-black);border:1px solid var(--border);border-radius:7px;}
+.submit-match-btn{display:none;background:var(--white);color:var(--black);border:none;border-radius:8px;padding:.6rem 1.5rem;font-family:'Barlow',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;margin-top:.75rem;margin-right:.4rem;}
+.submit-match-btn:hover{background:var(--off-white);}
+.prog-row{display:flex;justify-content:space-between;margin-bottom:.35rem;}
+.prog-lbl{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);}
+.prog-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;color:var(--white);}
+.prog-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:1.4rem;overflow:hidden;}
+.prog-fill{height:100%;background:var(--white);border-radius:2px;transition:width .45s ease;}
+.pl-pool{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.2rem;}
+.pl-slots{display:flex;flex-direction:column;gap:.45rem;}
+.pl-slot{background:var(--off-black);border:2px dashed var(--border);border-radius:9px;padding:.65rem 1rem;min-height:46px;display:flex;align-items:center;gap:.8rem;transition:all .15s;}
+.pl-slot.over{border-color:var(--white);background:#141414;}
+.pl-slot.filled{border-style:solid;border-color:var(--white);}
+.pl-slot.ok-slot{border-color:#4ade80;}
+.pl-slot.no-slot{border-color:#f87171;border-style:dashed;}
+.pl-slot-num{font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;color:var(--grey);flex-shrink:0;width:20px;text-align:center;pointer-events:none;}
+.pl-slot-hint{font-size:.75rem;color:var(--grey);font-style:italic;pointer-events:none;}
+.sep-line{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--grey);letter-spacing:.1em;padding:.2rem 1rem;}
+.qblock{background:var(--dark);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.3rem;margin-bottom:.85rem;}
+.qnum{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);margin-bottom:.35rem;}
+.qtxt{font-family:'Barlow',sans-serif;font-size:.96rem;font-weight:700;color:var(--white);line-height:1.45;margin-bottom:.9rem;}
+.opts{display:flex;flex-direction:column;gap:.4rem;}
+.opt{background:var(--off-black);border:1.5px solid var(--border);border-radius:8px;padding:.58rem .95rem;font-size:.84rem;cursor:pointer;transition:all .2s;text-align:left;font-family:'Barlow',sans-serif;color:var(--light);}
+.opt:hover:not(.locked){border-color:var(--white);color:var(--white);}
+.opt.sel{border-color:var(--white);background:#1c1c1c;color:var(--white);font-weight:600;}
+.opt.correct{border-color:#4ade80!important;background:#0a1a0a!important;color:#4ade80;font-weight:700;}
+.opt.correct::after{content:' ✓';font-weight:900;}
+.opt.wrong{border-color:#f87171!important;background:#1a0808!important;color:#f87171;text-decoration:line-through;}
+.opt.locked{pointer-events:none;}
+.qfb{display:none;margin-top:.7rem;padding:.65rem .95rem;border-radius:8px;font-size:.83rem;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.ok{background:#0a1a0a;border:1px solid #4ade80;color:#4ade80;}
+.qfb.bad{background:#111;border:1px solid var(--grey);color:var(--silver);}
+.scen{background:var(--dark);border:1px solid var(--border);border-radius:var(--r);margin-bottom:1rem;overflow:hidden;}
+.scen-head{background:var(--white);color:var(--black);padding:.9rem 1.2rem;}
+.scen-head h4{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.04em;margin-bottom:.1rem;}
+.scen-head .stag{font-size:.72rem;color:#666;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;}
+.scen-body{padding:1rem 1.2rem;}
+.scen-body p{font-size:.85rem;line-height:1.62;color:var(--light);margin-bottom:.9rem;}
+.scen-choices{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:.8rem;}
+.schoice{border:1.5px solid var(--border);background:var(--off-black);border-radius:8px;padding:.38rem .95rem;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-family:'Barlow',sans-serif;color:var(--silver);transition:all .2s;}
+.schoice:hover{border-color:var(--white);color:var(--white);}
+.schoice.active{border-color:var(--white);background:#1a1a1a;color:var(--white);}
+.scen-reveal{display:none;padding:.8rem 1rem;border-radius:9px;background:var(--off-black);border:1px solid var(--border);font-size:.83rem;line-height:1.6;color:var(--light);border-left:3px solid var(--white);}
+.scen-reveal.show{display:block;}
+.scen-reveal strong{color:var(--white);}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem;}
+@media(max-width:500px){.calc-grid{grid-template-columns:1fr;}}
+.ig label{display:block;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-bottom:.3rem;}
+.ig input,.ig select{width:100%;background:var(--off-black);border:1.5px solid var(--border);border-radius:8px;padding:.55rem .85rem;font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--white);outline:none;transition:border-color .2s;}
+.ig input:focus,.ig select:focus{border-color:var(--white);}
+.ig input::placeholder{color:var(--grey);}
+.rbar{background:var(--off-black);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-bottom:.45rem;display:flex;justify-content:space-between;align-items:center;gap:.5rem;}
+.rl{font-size:.8rem;font-weight:600;color:var(--silver);}
+.rv{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700;color:var(--white);}
+.rv.big{font-size:1.15rem;}
+.buzzer-card{background:var(--white);border-radius:var(--r);padding:2rem;text-align:center;margin-bottom:1.5rem;position:relative;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+.bq-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-bottom:.8rem;}
+.bq-txt{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,4vw,2.2rem);letter-spacing:.03em;color:var(--black);line-height:1.2;margin-bottom:.5rem;}
+.bq-context{font-size:.82rem;color:#666;margin-bottom:1.5rem;line-height:1.5;}
+.buzzer-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.b-true,.b-false{border:3px solid var(--black);border-radius:10px;padding:1rem 2.5rem;font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.05em;cursor:pointer;transition:all .15s;min-width:130px;}
+.b-true{background:var(--black);color:var(--white);}
+.b-true:hover{background:#222;transform:scale(1.04);}
+.b-false{background:var(--white);color:var(--black);}
+.b-false:hover{background:var(--off-white);transform:scale(1.04);}
+.bq-result{display:none;padding:.8rem 1.4rem;border-radius:9px;font-size:.88rem;font-weight:600;line-height:1.5;margin-top:1.2rem;max-width:500px;}
+.bq-result.show{display:block;}
+.bq-result.ok-r{background:var(--black);color:var(--white);border:2px solid var(--black);}
+.bq-result.no-r{background:#f0f0f0;color:#444;border:2px solid #ddd;}
+.buzz-score-row{display:flex;justify-content:space-between;margin-bottom:.3rem;}
+.buzz-score{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);}
+.buzz-score span{color:var(--white);}
+.skip-btn{background:none;border:1.5px solid var(--border);color:var(--grey);border-radius:7px;padding:.4rem 1rem;font-family:'Barlow',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;margin-top:.6rem;}
+.skip-btn:hover{border-color:var(--silver);color:var(--silver);}
+.buzzer-nav{display:flex;gap:.6rem;justify-content:center;margin-top:1.2rem;}
+.scoreboard{display:none;background:var(--white);color:var(--black);border-radius:var(--r);padding:2rem;text-align:center;margin-top:1.2rem;}
+.scoreboard.show{display:block;}
+.sb-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;letter-spacing:.04em;line-height:1;}
+.sb-label-final{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--grey);margin-top:.2rem;}
+.sb-msg{font-size:.9rem;font-weight:600;color:#444;margin-top:.8rem;line-height:1.6;max-width:400px;margin-left:auto;margin-right:auto;}
+.gear-wrap{display:flex;flex-direction:column;gap:1rem;}
+.gear-item{background:var(--off-black);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;}
+.gear-item label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;font-size:.85rem;font-weight:600;color:var(--light);}
+.gear-item label span{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--white);}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;background:var(--border);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--white);border-radius:50%;cursor:pointer;border:2px solid var(--black);}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--white);border-radius:50%;cursor:pointer;border:2px solid var(--black);}
+.gear-verdict{background:var(--dark);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-top:.8rem;font-size:.84rem;line-height:1.6;color:var(--light);}
+.gear-verdict strong{color:var(--white);}
+.gear-bar-wrap{height:20px;background:var(--border);border-radius:4px;overflow:hidden;margin:.5rem 0;}
+.gear-bar{height:100%;background:var(--white);border-radius:4px;transition:width .4s ease;}
+.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+@media(max-width:520px){.sys-grid{grid-template-columns:1fr;}}
+.sys-box{background:var(--off-black);border:1.5px dashed var(--border);border-radius:10px;padding:.9rem 1rem;min-height:90px;transition:all .15s;position:relative;}
+.sys-box.over{border-color:var(--white);border-style:solid;}
+.sys-box.filled{border-style:solid;border-color:var(--white);}
+.sys-box h4{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--silver);margin-bottom:.6rem;pointer-events:none;}
+.sys-box .examples{display:flex;flex-wrap:wrap;gap:.3rem;pointer-events:none;}
+.sys-box .examples .chip{pointer-events:all;}
+.sys-pool{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;padding:.8rem;background:var(--off-black);border:2px dashed var(--border);border-radius:10px;min-height:50px;}
+.comp-table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+.comp-table th{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);padding:.65rem .9rem;border-bottom:2px solid var(--border);text-align:left;}
+.comp-table td{padding:.65rem .9rem;font-size:.83rem;color:var(--light);border-bottom:1px solid var(--border);line-height:1.5;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table td:first-child{font-weight:700;color:var(--white);}
+.factor-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem;}
+@media(max-width:520px){.factor-grid{grid-template-columns:1fr;}}
+.factor-item{background:var(--off-black);border:1.5px solid var(--border);border-radius:9px;padding:.7rem .95rem;cursor:pointer;transition:all .2s;}
+.factor-item:hover:not(.f-done){border-color:var(--silver);}
+.factor-item.f-sel{border-color:var(--white);background:#1c1c1c;}
+.factor-item h5{font-family:'Barlow',sans-serif;font-size:.85rem;font-weight:700;color:var(--white);margin-bottom:.2rem;}
+.factor-item p{font-size:.75rem;color:var(--grey);line-height:1.4;}
+.factor-reveal{display:none;background:var(--off-black);border:1px solid var(--border);border-left:3px solid var(--white);border-radius:9px;padding:.8rem 1rem;margin-top:.6rem;font-size:.83rem;line-height:1.6;color:var(--light);}
+.factor-reveal.show{display:block;}
+.factor-reveal strong{color:var(--white);}
+.cs-wrap{display:flex;flex-direction:column;gap:.8rem;}
+.cs-bar-outer{background:var(--off-black);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;}
+.cs-bar-label{display:flex;justify-content:space-between;margin-bottom:.5rem;}
+.cs-bar-label span{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--silver);}
+.cs-bar-label .cs-pct{color:var(--white);}
+.cs-track{height:28px;background:var(--border);border-radius:6px;overflow:hidden;display:flex;}
+.cs-debt-bar{height:100%;background:var(--white);transition:width .4s ease;display:flex;align-items:center;justify-content:center;}
+.cs-eq-bar{height:100%;background:var(--mid);transition:width .4s ease;display:flex;align-items:center;justify-content:center;}
+.cs-bar-txt{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;color:var(--black);white-space:nowrap;padding:0 .4rem;}
+.cs-eq-txt{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;color:var(--grey);white-space:nowrap;padding:0 .4rem;}
+.cs-verdict{background:var(--dark);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;font-size:.84rem;line-height:1.7;color:var(--light);}
+.cs-verdict strong{color:var(--white);}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--white);color:var(--black);border-radius:9px;padding:.65rem 1.4rem;font-family:'Barlow',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.04em;transition:transform .3s ease;z-index:999;pointer-events:none;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.5);}
+.toast.up{transform:translateX(-50%) translateY(0);}
+.toast.bad-t{background:var(--off-black);color:var(--silver);border:1px solid var(--border);}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-eyebrow">MOD010837 · Lecture 7 · Group Work</div>
+  <h1>Financial<span>Management &amp; Markets</span></h1>
+  <p class="h-sub">10 activities. Zero knowledge needed. Learn everything by doing it together.</p>
+  <div class="h-badges">
+    <span class="hbadge">⏱ 90 min total</span>
+    <span class="hbadge">👥 Groups of 3–4</span>
+    <span class="hbadge">✦ No essays</span>
+    <span class="hbadge">✦ Hands-on only</span>
+  </div>
+</header>
+<div class="score-bar" id="scoreBar">
+  <span class="sb-label">Progress</span>
+  <div class="sb-acts" id="sbPips">
+    <div class="sb-pip pip-active" id="pip1" title="Activity 1">1</div>
+    <div class="sb-pip pip-locked" id="pip2" title="Activity 2 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip3" title="Activity 3 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip4" title="Activity 4 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip5" title="Activity 5 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip6" title="Activity 6 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip7" title="Activity 7 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip8" title="Activity 8 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip9" title="Activity 9 — locked">🔒</div>
+    <div class="sb-pip pip-locked" id="pip10" title="Activity 10 — locked">🔒</div>
+  </div>
+  <div class="sb-total">Total Score: <span id="sbTotal">0</span> pts</div>
+</div>
+<div class="tab-bar">
+  <button class="tab-btn on" id="tab1" onclick="goTab(1,this)">① Sort It <span class="tab-status"></span></button>
+  <button class="tab-btn locked" id="tab2">② Internal vs External <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab3">③ Map It <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab4">④ Bonds vs Debentures <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab5">⑤ Build the P&amp;L <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab6">⑥ IPO Maths <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab7">⑦ Choosing Finance <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab8">⑧ Capital Structure <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab9">⑨ Advise the CFO <span class="tab-status">🔒</span></button>
+  <button class="tab-btn locked" id="tab10">⑩ Buzzer Round <span class="tab-status">🔒</span></button>
+</div>
+
+<!-- ACTIVITY 1 — SORT IT -->
+
+<div class="panel on" id="p1">
+  <div class="intro" data-num="1">
+    <div class="intro-tag">Activity 1 of 10</div>
+    <h2>Sort It Out</h2>
+    <p>Where does money come from? Every business needs finance. It can come from <em>borrowing</em> (debt) or from <em>investment</em> (equity) — and it can last a short time or forever. Drag the cards to find out which is which.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Drag &amp; Drop</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">💡</span>
+    <div class="kpill-body">
+      <strong>Debt</strong> = borrowed money. Must be <span class="hl">repaid</span>. Interest is a <span class="hl">legal obligation</span> — you pay it whether you make profit or not. &nbsp;|&nbsp;
+      <strong>Equity</strong> = owner's money. No mandatory repayment. Dividends are <span class="hl">optional</span> — paid from profits, not legally required.
+    </div>
+  </div>
+  <div class="slabel">Part A — Debt or Equity?</div>
+  <div class="card">
+    <div class="card-h"><h3>🃏 Drag each card → Debt or Equity</h3></div>
+    <div class="card-b">
+      <div class="chip-pool" id="pool1a">
+        <div class="chip" draggable="true" data-ans="debt">Bank Loan</div>
+        <div class="chip" draggable="true" data-ans="equity">Share Issue (IPO)</div>
+        <div class="chip" draggable="true" data-ans="debt">Debenture</div>
+        <div class="chip" draggable="true" data-ans="equity">Retained Earnings</div>
+        <div class="chip" draggable="true" data-ans="debt">Mortgage</div>
+        <div class="chip" draggable="true" data-ans="equity">Venture Capital</div>
+        <div class="chip" draggable="true" data-ans="debt">Bank Overdraft</div>
+        <div class="chip" draggable="true" data-ans="debt">Bond</div>
+        <div class="chip" draggable="true" data-ans="equity">Sale of Assets</div>
+        <div class="chip" draggable="true" data-ans="debt">Trade Credit</div>
+      </div>
+      <div class="drop-row">
+        <div class="dzone dz-debt" id="dz-debt" data-col="debt"><h4>💳 Debt — Borrowed Money</h4></div>
+        <div class="dzone dz-equity" id="dz-equity" data-col="equity"><h4>📈 Equity — Owner's Capital</h4></div>
+      </div>
+      <button class="btn btn-waiting" id="chk1a" onclick="checkDrop('1a',['dz-debt','dz-equity'])" disabled>✓ Check</button>
+      <button class="btn-outline" onclick="resetDrop('1a','pool1a',['dz-debt','dz-equity'])">↺ Reset</button>
+      <div class="drag-result" id="dr1a"></div>
+    </div>
+  </div>
+  <div class="slabel">Part B — How Long Does It Last?</div>
+  <div class="kpill">
+    <span class="kpill-icon">⏱</span>
+    <div class="kpill-body">
+      <strong>Short-term</strong> (days–months): overdraft, trade credit, debt factoring &nbsp;|&nbsp;
+      <strong>Medium-term</strong> (1–5 years): leasing, hire purchase, medium loans &nbsp;|&nbsp;
+      <strong>Long-term/Permanent</strong> (5+ years): share issue, mortgage, debentures, grants
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h3>⏳ Drag each card → Short, Medium, or Long-term</h3></div>
+    <div class="card-b">
+      <div class="chip-pool" id="pool1b">
+        <div class="chip" draggable="true" data-ans="short">Bank Overdraft</div>
+        <div class="chip" draggable="true" data-ans="short">Trade Credit</div>
+        <div class="chip" draggable="true" data-ans="short">Debt Factoring</div>
+        <div class="chip" draggable="true" data-ans="medium">Leasing</div>
+        <div class="chip" draggable="true" data-ans="medium">Hire Purchase</div>
+        <div class="chip" draggable="true" data-ans="medium">Medium-term Loan</div>
+        <div class="chip" draggable="true" data-ans="long">Share Issue</div>
+        <div class="chip" draggable="true" data-ans="long">Mortgage</div>
+        <div class="chip" draggable="true" data-ans="long">Debenture</div>
+        <div class="chip" draggable="true" data-ans="long">Grant</div>
+      </div>
+      <div class="drop-row">
+        <div class="dzone dz-short" id="dz-short" data-col="short"><h4>⚡ Short-term</h4></div>
+        <div class="dzone dz-medium" id="dz-medium" data-col="medium"><h4>⏳ Medium-term</h4></div>
+        <div class="dzone dz-long" id="dz-long" data-col="long"><h4>🏛 Long-term</h4></div>
+      </div>
+      <button class="btn btn-waiting" id="chk1b" onclick="checkDrop('1b',['dz-short','dz-medium','dz-long'])" disabled>✓ Check</button>
+      <button class="btn-outline" onclick="resetDrop('1b','pool1b',['dz-short','dz-medium','dz-long'])">↺ Reset</button>
+      <div class="drag-result" id="dr1b"></div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass1">✓ Activity 1 complete — Activity 2 is now unlocked.<div class="pb-sub">Score ≥ 80% on ALL parts to unlock the next activity.</div></div>
+</div>
+
+<!-- ACTIVITY 2 — INTERNAL vs EXTERNAL -->
+
+<div class="panel" id="p2">
+  <div class="intro" data-num="2">
+    <div class="intro-tag">Activity 2 of 10</div>
+    <h2>Internal vs External Finance</h2>
+    <p>Finance doesn't just come from banks or investors — some of it comes from <em>inside</em> the business itself. Can you tell the difference? Drag each source into the correct column, then match the definitions — <strong>without any hints along the way</strong>.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Drag + Match</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">💡</span>
+    <div class="kpill-body">
+      <strong>Internal finance</strong> = money already inside the business. No interest, no dilution, no applications. Examples: <span class="hl">retained earnings</span>, working capital, sale of assets.<br>
+      <strong>External finance</strong> = money raised from outside — banks, investors, creditors. Includes all debt and external equity.
+    </div>
+  </div>
+  <div class="slabel">Part A — Drag each source → Internal or External</div>
+  <div class="card">
+    <div class="card-h"><h3>🗂 Sort the sources of finance</h3></div>
+    <div class="card-b">
+      <div class="chip-pool" id="pool2a">
+        <div class="chip" draggable="true" data-ans="int">Retained Earnings</div>
+        <div class="chip" draggable="true" data-ans="ext">Bank Loan</div>
+        <div class="chip" draggable="true" data-ans="int">Working Capital</div>
+        <div class="chip" draggable="true" data-ans="ext">Share Issue (IPO)</div>
+        <div class="chip" draggable="true" data-ans="int">Sale of Assets</div>
+        <div class="chip" draggable="true" data-ans="ext">Trade Credit</div>
+        <div class="chip" draggable="true" data-ans="ext">Venture Capital</div>
+        <div class="chip" draggable="true" data-ans="ext">Debenture</div>
+        <div class="chip" draggable="true" data-ans="ext">Bank Overdraft</div>
+        <div class="chip" draggable="true" data-ans="ext">Grant</div>
+      </div>
+      <div class="drop-row">
+        <div class="dzone dz-int" id="dz-int" data-col="int"><h4>🏠 Internal — From Within</h4></div>
+        <div class="dzone dz-ext" id="dz-ext" data-col="ext"><h4>🌍 External — From Outside</h4></div>
+      </div>
+      <button class="btn btn-waiting" id="chk2a" onclick="checkDrop('2a',['dz-int','dz-ext'])" disabled>✓ Check</button>
+      <button class="btn-outline" onclick="resetDrop('2a','pool2a',['dz-int','dz-ext'])">↺ Reset</button>
+      <div class="drag-result" id="dr2a"></div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Match the definition</div>
+  <div class="kpill">
+    <span class="kpill-icon">🔗</span>
+    <div class="kpill-body">
+      Match all 6 pairs first, then hit <strong>Submit All</strong> to see your results. No hints until you're done — discuss as a group before committing!
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h3>🔗 Pair all terms with definitions → then Submit</h3></div>
+    <div class="card-b">
+      <div class="match-instructions" id="miIE">Select a term, then select its definition. Pair all 6, then Submit.</div>
+      <div class="prog-row"><span class="prog-lbl">Paired</span><span class="prog-num" id="m2cnt_ie">0 / 6</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="m2bar_ie" style="width:0%"></div></div>
+      <div class="match-wrap">
+        <div>
+          <h4>Term</h4>
+          <div class="mitem term-ie" data-mid="ie1" onclick="pickT_ie(this)">Retained Earnings</div>
+          <div class="mitem term-ie" data-mid="ie2" onclick="pickT_ie(this)">Working Capital</div>
+          <div class="mitem term-ie" data-mid="ie3" onclick="pickT_ie(this)">Sale of Assets</div>
+          <div class="mitem term-ie" data-mid="ie4" onclick="pickT_ie(this)">External Finance</div>
+          <div class="mitem term-ie" data-mid="ie5" onclick="pickT_ie(this)">Venture Capital</div>
+          <div class="mitem term-ie" data-mid="ie6" onclick="pickT_ie(this)">Trade Credit</div>
+        </div>
+        <div>
+          <h4>Definition</h4>
+          <div class="mitem def-ie" data-mid="ie3" onclick="pickD_ie(this)">Converting existing assets into cash — reduces the asset base but avoids new debt</div>
+          <div class="mitem def-ie" data-mid="ie6" onclick="pickD_ie(this)">Short-term external finance — a supplier lets you buy now and pay later</div>
+          <div class="mitem def-ie" data-mid="ie1" onclick="pickD_ie(this)">Profits kept in the business rather than distributed to shareholders as dividends</div>
+          <div class="mitem def-ie" data-mid="ie5" onclick="pickD_ie(this)">Equity investment from a specialist fund in exchange for a share of ownership</div>
+          <div class="mitem def-ie" data-mid="ie2" onclick="pickD_ie(this)">Managing current assets and liabilities more efficiently to free up internal cash</div>
+          <div class="mitem def-ie" data-mid="ie4" onclick="pickD_ie(this)">Any finance raised from outside the business — includes all debt and non-retained equity</div>
+        </div>
+      </div>
+      <button class="submit-match-btn" id="submitMatchIE" onclick="submitMatch_ie()">✓ Submit All Pairs</button>
+      <button class="btn-outline" onclick="resetMatch_ie()">↺ Reset</button>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass2">✓ Activity 2 complete — Activity 3 is now unlocked.<div class="pb-sub">Keep going — match game counted toward your score.</div></div>
+</div>
+
+<!-- ACTIVITY 3 — MAP THE FINANCIAL SYSTEM -->
+
+<div class="panel" id="p3">
+  <div class="intro" data-num="3">
+    <div class="intro-tag">Activity 3 of 10</div>
+    <h2>Map the Financial System</h2>
+    <p>The financial system is the network that connects people who <em>have</em> money with people who <em>need</em> it. It has 4 parts. Drag each example into the correct category — then match the key terms without any feedback until you submit.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Drag + Match</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">🌐</span>
+    <div class="kpill-body">
+      The financial system = <span class="hl">Institutions</span> (e.g. banks) + <span class="hl">Markets</span> (e.g. stock market) + <span class="hl">Instruments</span> (e.g. shares, bonds) + <span class="hl">Services</span> (e.g. insurance, brokerage).
+    </div>
+  </div>
+  <div class="slabel">Part A — Drop each example into the right box</div>
+  <div class="card">
+    <div class="card-h"><h3>🗺 Drag examples → correct category</h3></div>
+    <div class="card-b">
+      <div class="sys-pool" id="sysPool">
+        <div class="chip" draggable="true" data-sys="inst">Barclays Bank</div>
+        <div class="chip" draggable="true" data-sys="mkt">Stock Exchange</div>
+        <div class="chip" draggable="true" data-sys="inst">Insurance Company</div>
+        <div class="chip" draggable="true" data-sys="instr">Shares</div>
+        <div class="chip" draggable="true" data-sys="instr">Bonds</div>
+        <div class="chip" draggable="true" data-sys="mkt">Forex Market</div>
+        <div class="chip" draggable="true" data-sys="svc">Financial Advice</div>
+        <div class="chip" draggable="true" data-sys="svc">Brokerage</div>
+        <div class="chip" draggable="true" data-sys="inst">Investment Fund</div>
+        <div class="chip" draggable="true" data-sys="instr">Options &amp; Futures</div>
+        <div class="chip" draggable="true" data-sys="mkt">Bond Market</div>
+        <div class="chip" draggable="true" data-sys="svc">Insurance</div>
+      </div>
+      <div class="sys-grid">
+        <div class="sys-box" id="sys-inst" data-sys="inst"><h4>🏦 Institutions</h4><div class="examples"></div></div>
+        <div class="sys-box" id="sys-mkt" data-sys="mkt"><h4>📊 Markets</h4><div class="examples"></div></div>
+        <div class="sys-box" id="sys-instr" data-sys="instr"><h4>🧾 Instruments</h4><div class="examples"></div></div>
+        <div class="sys-box" id="sys-svc" data-sys="svc"><h4>⚙️ Services</h4><div class="examples"></div></div>
+      </div>
+      <button class="btn btn-waiting" id="chk3a" onclick="checkSys()" disabled>✓ Check</button>
+      <button class="btn-outline" onclick="resetSys()">↺ Reset</button>
+      <div class="drag-result" id="dr3a"></div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Primary vs Secondary Market</div>
+  <div class="kpill">
+    <span class="kpill-icon">💡</span>
+    <div class="kpill-body">
+      <strong>Primary market</strong>: NEW securities issued → <span class="hl">company gets the money</span>. Example: IPO.<br>
+      <strong>Secondary market</strong>: EXISTING shares traded between investors → <span class="hl">company gets nothing</span>.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h3>🔗 Pair all terms → then Submit All</h3></div>
+    <div class="card-b">
+      <div class="match-instructions">Select a term, then select its definition. Pair all 8, then Submit — no hints until you do!</div>
+      <div class="prog-row"><span class="prog-lbl">Paired</span><span class="prog-num" id="m2cnt">0 / 8</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="m2bar" style="width:0%"></div></div>
+      <div class="match-wrap">
+        <div>
+          <h4>Term</h4>
+          <div class="mitem term-i" data-mid="1" onclick="pickT(this)">IPO</div>
+          <div class="mitem term-i" data-mid="2" onclick="pickT(this)">Underwriter</div>
+          <div class="mitem term-i" data-mid="3" onclick="pickT(this)">Market cap</div>
+          <div class="mitem term-i" data-mid="4" onclick="pickT(this)">Primary market</div>
+          <div class="mitem term-i" data-mid="5" onclick="pickT(this)">Secondary market</div>
+          <div class="mitem term-i" data-mid="6" onclick="pickT(this)">Gearing</div>
+          <div class="mitem term-i" data-mid="7" onclick="pickT(this)">Debenture</div>
+          <div class="mitem term-i" data-mid="8" onclick="pickT(this)">Retained earnings</div>
+        </div>
+        <div>
+          <h4>Definition</h4>
+          <div class="mitem def-i" data-mid="5" onclick="pickD(this)">Where existing shares are traded between investors — the company gets no new money</div>
+          <div class="mitem def-i" data-mid="8" onclick="pickD(this)">Profits kept inside the business instead of paid to shareholders</div>
+          <div class="mitem def-i" data-mid="3" onclick="pickD(this)">Total shares outstanding × share price — shows total company value</div>
+          <div class="mitem def-i" data-mid="2" onclick="pickD(this)">Investment bank that runs the IPO, sets the price, and takes a fee</div>
+          <div class="mitem def-i" data-mid="1" onclick="pickD(this)">When a private company sells shares to the public for the first time</div>
+          <div class="mitem def-i" data-mid="7" onclick="pickD(this)">Unsecured long-term corporate debt — riskier than a bond</div>
+          <div class="mitem def-i" data-mid="4" onclick="pickD(this)">Where new securities are issued — the company receives the money raised</div>
+          <div class="mitem def-i" data-mid="6" onclick="pickD(this)">The ratio of debt to equity in a company's capital structure</div>
+        </div>
+      </div>
+      <button class="submit-match-btn" id="submitMatch3" onclick="submitMatch3()">✓ Submit All Pairs</button>
+      <button class="btn-outline" onclick="resetMatch3()">↺ Reset</button>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass3">✓ Activity 3 complete — Activity 4 is now unlocked.<div class="pb-sub">Primary vs secondary market — a key exam concept.</div></div>
+</div>
+
+<!-- ACTIVITY 4 — BONDS vs DEBENTURES -->
+
+<div class="panel" id="p4">
+  <div class="intro" data-num="4">
+    <div class="intro-tag">Activity 4 of 10</div>
+    <h2>Bonds vs Debentures</h2>
+    <p>Both are long-term debt instruments — but they are <em>not</em> the same thing. The difference comes down to security, risk, and what happens if the company fails.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Sort + Scenario</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">💡</span>
+    <div class="kpill-body">
+      <strong>Bonds</strong> = long-term debt, often <span class="hl">secured on assets</span>. Lower risk → lower return.<br>
+      <strong>Debentures</strong> = long-term debt, usually <span class="hl">unsecured</span>. Higher risk → higher interest rate.
+    </div>
+  </div>
+  <div class="slabel">Part A — Drag each feature → Bond or Debenture</div>
+  <div class="card">
+    <div class="card-h"><h3>🃏 Sort the features into the correct column</h3></div>
+    <div class="card-b">
+      <div class="chip-pool" id="pool4a">
+        <div class="chip" draggable="true" data-ans="bond">Often secured on company assets</div>
+        <div class="chip" draggable="true" data-ans="deben">Usually unsecured</div>
+        <div class="chip" draggable="true" data-ans="bond">Lower risk to investor</div>
+        <div class="chip" draggable="true" data-ans="deben">Higher risk to investor</div>
+        <div class="chip" draggable="true" data-ans="bond">Issued by governments &amp; corporations</div>
+        <div class="chip" draggable="true" data-ans="deben">Relies on issuer's creditworthiness</div>
+        <div class="chip" draggable="true" data-ans="deben">Often offers higher interest rate</div>
+        <div class="chip" draggable="true" data-ans="bond">Investor can claim assets if firm fails</div>
+      </div>
+      <div class="drop-row">
+        <div class="dzone dz-bond" id="dz-bond" data-col="bond"><h4>🔒 Bond</h4></div>
+        <div class="dzone dz-deben" id="dz-deben" data-col="deben"><h4>📄 Debenture</h4></div>
+      </div>
+      <button class="btn btn-waiting" id="chk4a" onclick="checkDrop('4a',['dz-bond','dz-deben'])" disabled>✓ Check</button>
+      <button class="btn-outline" onclick="resetDrop('4a','pool4a',['dz-bond','dz-deben'])">↺ Reset</button>
+      <div class="drag-result" id="dr4a"></div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Comparison at a glance</div>
+  <div class="card">
+    <div class="card-h"><h3>📋 Bonds vs Debentures</h3></div>
+    <div class="card-b">
+      <table class="comp-table">
+        <thead><tr><th>Feature</th><th>Bond</th><th>Debenture</th></tr></thead>
+        <tbody>
+          <tr><td>Security</td><td>Often secured on assets</td><td>Often unsecured</td></tr>
+          <tr><td>Risk to investor</td><td>Lower (if secured)</td><td>Higher (if unsecured)</td></tr>
+          <tr><td>Interest rate</td><td>Typically lower</td><td>Typically higher</td></tr>
+          <tr><td>Balance sheet</td><td>Liability</td><td>Liability</td></tr>
+          <tr><td>P&amp;L impact</td><td>Interest → finance cost</td><td>Interest → finance cost</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="slabel">Part C — Scenario: Who's more at risk?</div>
+  <div class="scen">
+    <div class="scen-head"><h4>⚠️ RetailCo Goes Into Administration</h4><div class="stag">Scenario · Insolvency · Priority of claims</div></div>
+    <div class="scen-body">
+      <p>RetailCo has £200m in bonds (secured on warehouse properties) and £80m in debentures (unsecured). It enters administration. Properties sold for £180m. Who gets paid first — and what do debenture holders receive?</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickScen4(1,'b',this)">Bondholders first — debenture holders get the rest</button>
+        <button class="schoice" onclick="pickScen4(1,'e',this)">Split equally between both</button>
+        <button class="schoice" onclick="pickScen4(1,'d',this)">Debenture holders first — they took more risk</button>
+      </div>
+      <div class="scen-reveal" id="sc4_1"><strong>Bondholders are paid first.</strong> Because their bonds are secured on the properties, they have first claim on sale proceeds. £180m goes to bondholders — still £20m short of the £200m owed, so bondholders themselves take a loss. Debenture holders, being unsecured, receive <em>nothing</em> from the property sale. This is why debentures carry higher risk and higher interest — compensation for lower priority in insolvency.</div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass4">✓ Activity 4 complete — Activity 5 is now unlocked.<div class="pb-sub">Bonds vs debentures — security and risk are the key distinctions.</div></div>
+</div>
+
+<!-- ACTIVITY 5 — BUILD THE P&L -->
+
+<div class="panel" id="p5">
+  <div class="intro" data-num="5">
+    <div class="intro-tag">Activity 5 of 10</div>
+    <h2>Build the Profit &amp; Loss</h2>
+    <p>The P&amp;L shows how a business made — or lost — money. Every line has a specific place. Drag them into order, then plug in real numbers to see how interest and dividends work differently.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Drag + Calculate</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">📊</span>
+    <div class="kpill-body">
+      <strong>Interest</strong> on a loan is a <span class="hl">finance cost</span> — it appears BELOW operating profit in the P&amp;L.<br>
+      <strong>Dividends</strong> do NOT appear in the P&amp;L at all — they come out of retained earnings on the balance sheet.
+    </div>
+  </div>
+  <div class="slabel">Part A — Drag the P&amp;L lines into the correct order</div>
+  <div class="card">
+    <div class="card-h"><h3>📋 Build the P&amp;L — drag into position 1 → 7</h3></div>
+    <div class="card-b">
+      <div class="chip-pool" id="plPool">
+        <div class="chip" draggable="true" data-plid="revenue">Revenue (Sales)</div>
+        <div class="chip" draggable="true" data-plid="cos">Cost of Sales</div>
+        <div class="chip" draggable="true" data-plid="gp">= Gross Profit</div>
+        <div class="chip" draggable="true" data-plid="opex">Operating Expenses</div>
+        <div class="chip" draggable="true" data-plid="op">= Operating Profit</div>
+        <div class="chip" draggable="true" data-plid="fc">Finance Costs (Interest)</div>
+        <div class="chip" draggable="true" data-plid="np">= Net Profit before Tax</div>
+      </div>
+      <div class="pl-slots" id="plSlots">
+        <div class="pl-slot" id="ps1" data-ex="revenue"><span class="pl-slot-num">1</span><span class="pl-slot-hint">Start of P&amp;L…</span></div>
+        <div class="sep-line">− minus</div>
+        <div class="pl-slot" id="ps2" data-ex="cos"><span class="pl-slot-num">2</span><span class="pl-slot-hint">What did it cost to make/buy?</span></div>
+        <div class="sep-line">↓</div>
+        <div class="pl-slot" id="ps3" data-ex="gp"><span class="pl-slot-num">3</span><span class="pl-slot-hint">After direct costs…</span></div>
+        <div class="sep-line">− minus</div>
+        <div class="pl-slot" id="ps4" data-ex="opex"><span class="pl-slot-num">4</span><span class="pl-slot-hint">Rent, salaries, marketing…</span></div>
+        <div class="sep-line">↓</div>
+        <div class="pl-slot" id="ps5" data-ex="op"><span class="pl-slot-num">5</span><span class="pl-slot-hint">Core business profit…</span></div>
+        <div class="sep-line">− minus (financing, not operations)</div>
+        <div class="pl-slot" id="ps6" data-ex="fc"><span class="pl-slot-num">6</span><span class="pl-slot-hint">This comes from borrowing money…</span></div>
+        <div class="sep-line">↓</div>
+        <div class="pl-slot" id="ps7" data-ex="np"><span class="pl-slot-num">7</span><span class="pl-slot-hint">Bottom line…</span></div>
+      </div>
+      <button class="btn btn-waiting" id="chk5a" onclick="checkPL()" disabled>✓ Check Order</button>
+      <button class="btn-outline" onclick="resetPL()">↺ Reset</button>
+      <div class="drag-result" id="dr5a"></div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Calculate with real numbers</div>
+  <div class="kpill">
+    <span class="kpill-icon">🧮</span>
+    <div class="kpill-body">Company: <strong>Revenue £200m · Cost of Sales £80m · Operating Expenses £40m · Borrowed £50m at 6%</strong></div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h3>🔢 Enter the numbers — P&amp;L calculates live</h3></div>
+    <div class="card-b">
+      <div class="calc-grid">
+        <div class="ig"><label>Revenue (£m)</label><input type="number" id="plRev" placeholder="200" oninput="calcPL()"></div>
+        <div class="ig"><label>Cost of Sales (£m)</label><input type="number" id="plCos" placeholder="80" oninput="calcPL()"></div>
+        <div class="ig"><label>Operating Expenses (£m)</label><input type="number" id="plOpex" placeholder="40" oninput="calcPL()"></div>
+        <div class="ig"><label>Loan Amount (£m)</label><input type="number" id="plLoan" placeholder="50" oninput="calcPL()"></div>
+        <div class="ig"><label>Interest Rate (%)</label><input type="number" id="plRate" placeholder="6" oninput="calcPL()"></div>
+      </div>
+      <div class="rbar"><span class="rl">Gross Profit</span><span class="rv" id="r_gp">—</span></div>
+      <div class="rbar"><span class="rl">Operating Profit</span><span class="rv" id="r_op">—</span></div>
+      <div class="rbar"><span class="rl">Finance Cost (Interest — below operating profit)</span><span class="rv" id="r_fc">—</span></div>
+      <div class="rbar"><span class="rl">Net Profit before Tax</span><span class="rv big" id="r_np">—</span></div>
+      <div id="divNote" style="display:none;margin-top:.8rem;background:var(--off-black);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.82rem;color:var(--silver);line-height:1.5;">
+        💡 <strong style="color:var(--white);">Dividends don't appear here.</strong> They come from retained earnings on the balance sheet — NOT from the P&amp;L.
+      </div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass5">✓ Activity 5 complete — Activity 6 is now unlocked.<div class="pb-sub">Remember: interest = finance cost in P&amp;L. Dividends = retained earnings on balance sheet.</div></div>
+</div>
+
+<!-- ACTIVITY 6 — IPO MATHS -->
+
+<div class="panel" id="p6">
+  <div class="intro" data-num="6">
+    <div class="intro-tag">Activity 6 of 10</div>
+    <h2>IPO Maths Lab</h2>
+    <p>An IPO is when a private company sells shares to the public for the first time (primary market). The money raised goes to the company — minus the fees. Calculate how much they actually get.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 15 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Calculate</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">🧮</span>
+    <div class="kpill-body">
+      <strong>Gross Proceeds</strong> = Shares Issued × IPO Price per Share<br>
+      <strong>Underwriting Fee</strong> = Gross Proceeds × Fee %<br>
+      <strong style="color:var(--white);">Net Proceeds</strong> = Gross − Underwriting Fee − Other Expenses<br>
+      <strong>Market Cap</strong> = Total Shares Outstanding × Post-IPO Share Price
+    </div>
+  </div>
+  <div class="slabel">Step 1 — Work it out on paper, then check</div>
+  <div class="card">
+    <div class="card-h" style="background:var(--mid);"><h3 style="color:var(--white);">🏢 Tech Innovations Inc.</h3></div>
+    <div class="card-b">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1rem;font-size:.82rem;">
+        <div class="rbar"><span class="rl">Shares issued</span><span class="rv">10,000,000</span></div>
+        <div class="rbar"><span class="rl">IPO price/share</span><span class="rv">$15</span></div>
+        <div class="rbar"><span class="rl">Underwriting fee</span><span class="rv">7%</span></div>
+        <div class="rbar"><span class="rl">Other expenses</span><span class="rv">$2,000,000</span></div>
+      </div>
+      <div class="calc-grid">
+        <div class="ig"><label>Your Gross Proceeds ($)</label><input type="number" id="ag" placeholder="calculate first…"></div>
+        <div class="ig"><label>Your Underwriting Fee ($)</label><input type="number" id="au" placeholder="calculate first…"></div>
+        <div class="ig" style="grid-column:span 2;"><label>Your Net Proceeds ($)</label><input type="number" id="an" placeholder="calculate first…"></div>
+      </div>
+      <button class="btn" onclick="checkIPO('a',10000000,15,0.07,2000000)">✓ Check</button>
+      <button class="btn-outline" onclick="revIPO('a',10000000,15,0.07,2000000)">👁 Reveal</button>
+      <div id="ares" style="display:none;margin-top:.9rem;">
+        <div class="rbar"><span class="rl">Gross Proceeds</span><span class="rv" id="ar1">—</span></div>
+        <div class="rbar"><span class="rl">Underwriting Fee (7%)</span><span class="rv" id="ar2">—</span></div>
+        <div class="rbar"><span class="rl">Net Proceeds to Firm</span><span class="rv big" id="ar3">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h" style="background:var(--mid);"><h3 style="color:var(--white);">🌿 Green Energy Corp.</h3></div>
+    <div class="card-b">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-bottom:1rem;">
+        <div class="rbar"><span class="rl">Shares issued</span><span class="rv">5,000,000</span></div>
+        <div class="rbar"><span class="rl">IPO price/share</span><span class="rv">$20</span></div>
+        <div class="rbar"><span class="rl">Underwriting fee</span><span class="rv">5%</span></div>
+        <div class="rbar"><span class="rl">Other expenses</span><span class="rv">$1,500,000</span></div>
+      </div>
+      <div class="calc-grid">
+        <div class="ig"><label>Your Gross Proceeds ($)</label><input type="number" id="bg" placeholder="calculate first…"></div>
+        <div class="ig"><label>Your Underwriting Fee ($)</label><input type="number" id="bu" placeholder="calculate first…"></div>
+        <div class="ig" style="grid-column:span 2;"><label>Your Net Proceeds ($)</label><input type="number" id="bn" placeholder="calculate first…"></div>
+      </div>
+      <button class="btn" onclick="checkIPO('b',5000000,20,0.05,1500000)">✓ Check</button>
+      <button class="btn-outline" onclick="revIPO('b',5000000,20,0.05,1500000)">👁 Reveal</button>
+      <div id="bres" style="display:none;margin-top:.9rem;">
+        <div class="rbar"><span class="rl">Gross Proceeds</span><span class="rv" id="br1">—</span></div>
+        <div class="rbar"><span class="rl">Underwriting Fee (5%)</span><span class="rv" id="br2">—</span></div>
+        <div class="rbar"><span class="rl">Net Proceeds to Firm</span><span class="rv big" id="br3">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="slabel">Step 2 — Design your group's own IPO</div>
+  <div class="card">
+    <div class="card-h"><h3>🚀 Your Group's IPO — all figures calculate live</h3></div>
+    <div class="card-b">
+      <div class="calc-grid">
+        <div class="ig"><label>Company Name</label><input type="text" id="cn" placeholder="e.g. AquaTech Plc" style="font-family:'Barlow',sans-serif;"></div>
+        <div class="ig"><label>Industry</label><input type="text" id="ci" placeholder="e.g. Clean Energy" style="font-family:'Barlow',sans-serif;"></div>
+        <div class="ig"><label>New Shares to Issue</label><input type="number" id="cs" placeholder="e.g. 8000000" oninput="calcOwn()"></div>
+        <div class="ig"><label>IPO Price/Share ($)</label><input type="number" id="cp" placeholder="e.g. 25" oninput="calcOwn()"></div>
+        <div class="ig"><label>Underwriting Fee (%)</label><input type="number" id="cf" placeholder="e.g. 6" oninput="calcOwn()"></div>
+        <div class="ig"><label>Other Expenses ($)</label><input type="number" id="ce" placeholder="e.g. 2000000" oninput="calcOwn()"></div>
+        <div class="ig"><label>Existing Shares</label><input type="number" id="ces" placeholder="e.g. 20000000" oninput="calcOwn()"></div>
+        <div class="ig"><label>Post-IPO Price ($)</label><input type="number" id="cpp" placeholder="e.g. 28" oninput="calcOwn()"></div>
+      </div>
+      <div class="rbar"><span class="rl">Gross Proceeds</span><span class="rv" id="cr1">—</span></div>
+      <div class="rbar"><span class="rl">Underwriting Fee</span><span class="rv" id="cr2">—</span></div>
+      <div class="rbar"><span class="rl">Net Proceeds to Firm</span><span class="rv big" id="cr3">—</span></div>
+      <div class="rbar"><span class="rl">Total Shares After IPO</span><span class="rv" id="cr4">—</span></div>
+      <div class="rbar"><span class="rl">Market Capitalisation</span><span class="rv big" id="cr5">—</span></div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass6">✓ Activity 6 complete — Activity 7 is now unlocked.</div>
+</div>
+
+<!-- ACTIVITY 7 — CHOOSING FINANCE -->
+
+<div class="panel" id="p7">
+  <div class="intro" data-num="7">
+    <div class="intro-tag">Activity 7 of 10</div>
+    <h2>Choosing Finance — What Matters?</h2>
+    <p>Picking the right type of finance isn't random. Click each factor to reveal why it matters, then apply your knowledge to a real scenario.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Click + Scenario</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">⚖️</span>
+    <div class="kpill-body">There is no universal "best" type of finance. The right choice depends on who the business is, what it needs the money for, how long it needs it, and what the economic environment looks like.</div>
+  </div>
+  <div class="slabel">Part A — Click each factor to reveal why it matters</div>
+  <div class="card">
+    <div class="card-h"><h3>🔍 Click any factor — see why it matters</h3></div>
+    <div class="card-b">
+      <div class="factor-grid">
+        <div class="factor-item" onclick="toggleFactor(this,'f1')"><h5>Cost</h5><p>Interest rates, fees, dilution</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f2')"><h5>Use of Funds</h5><p>What is the money actually for?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f3')"><h5>Status &amp; Size</h5><p>Are you a startup or a FTSE 100?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f4')"><h5>Financial Situation</h5><p>Profitable? Cash-generative?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f5')"><h5>External Environment</h5><p>Interest rates, economic conditions</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f6')"><h5>Organisational Goals</h5><p>Short-term fix or long-term growth?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f7')"><h5>Existing Financial Structure</h5><p>How much debt do you already have?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f8')"><h5>Risk</h5><p>Can you afford to pay interest if profits fall?</p></div>
+        <div class="factor-item" onclick="toggleFactor(this,'f9')"><h5>Availability of Security</h5><p>Do you have assets to pledge?</p></div>
+      </div>
+      <div id="f1" class="factor-reveal"><strong>Cost:</strong> Debt has an explicit cost — the interest rate. Equity has an implicit cost — shareholders expect a return. When interest rates are high (e.g. 8%), taking on more debt becomes expensive and risky.</div>
+      <div id="f2" class="factor-reveal"><strong>Use of Funds:</strong> Finance should match the asset it funds. Buying a factory (long-term asset) → use long-term finance. Covering a short-term cash gap → use an overdraft. Mismatching creates cash flow problems.</div>
+      <div id="f3" class="factor-reveal"><strong>Status &amp; Size:</strong> A large listed company can issue shares or bonds publicly. A small startup cannot. An established firm has credit history and assets — a new business often has neither.</div>
+      <div id="f4" class="factor-reveal"><strong>Financial Situation:</strong> A company with strong profits can comfortably service debt. A loss-making company cannot pay interest (a legal obligation) and cannot rely on retained earnings.</div>
+      <div id="f5" class="factor-reveal"><strong>External Environment:</strong> High interest rates make debt costly. In a recession, banks become risk-averse. The timing of financing decisions is strongly influenced by the economic cycle.</div>
+      <div id="f6" class="factor-reveal"><strong>Organisational Goals:</strong> A company wanting rapid growth may prefer equity (no repayment pressure). One wanting to retain ownership may prefer debt.</div>
+      <div id="f7" class="factor-reveal"><strong>Existing Financial Structure:</strong> Gearing matters. If a company is already 70% debt-funded, taking on more debt is dangerous — lenders may refuse or charge very high rates.</div>
+      <div id="f8" class="factor-reveal"><strong>Risk:</strong> Debt creates mandatory cash outflows (interest). If profits fall, obligations remain. Equity carries no mandatory payments — dividends can be withheld if needed.</div>
+      <div id="f9" class="factor-reveal"><strong>Availability of Security:</strong> Secured loans require assets as collateral. A manufacturer with property can offer security — lowering lender risk and securing a better rate. A software company with no physical assets cannot.</div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Apply the factors</div>
+  <div class="scen">
+    <div class="scen-head"><h4>🏗 BuildRight Construction — Quick Decision Required</h4><div class="stag">Scenario · Financing decision · Multiple factors at play</div></div>
+    <div class="scen-body">
+      <p>BuildRight needs £30m to purchase new machinery. Profitable, owns significant property, low gearing, interest rates just rose to 7%. Need the money within 3 months. Which TWO factors are most decisive — and what do they point to?</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickScenF(1,'se',this)">Security + Existing structure → take debt</button>
+        <button class="schoice" onclick="pickScenF(1,'re',this)">Risk + External environment → issue equity instead</button>
+        <button class="schoice" onclick="pickScenF(1,'ug',this)">Use of funds + Goals → wait and use retained earnings</button>
+      </div>
+      <div class="scen-reveal" id="scF1"><strong>Security + Existing structure → take secured debt.</strong> BuildRight owns property (security available) and has low gearing (room for debt). They are profitable and can service the interest at 7%. A secured loan or mortgage is the most logical choice. Equity would take too long (an IPO or rights issue cannot be done in 3 months) and would dilute existing shareholders unnecessarily.</div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass7">✓ Activity 7 complete — Activity 8 is now unlocked.<div class="pb-sub">9 factors. No single right answer. Context always decides.</div></div>
+</div>
+
+<!-- ACTIVITY 8 — CAPITAL STRUCTURE -->
+
+<div class="panel" id="p8">
+  <div class="intro" data-num="8">
+    <div class="intro-tag">Activity 8 of 10</div>
+    <h2>Capital Structure</h2>
+    <p>Capital structure is the mix of debt and equity a business uses to fund itself. Too much debt is dangerous. Too little means missing out on cheap finance.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team</span><span class="imeta">✦ Slider + Classify</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">📐</span>
+    <div class="kpill-body">
+      <strong>Gearing ratio</strong> = Debt ÷ (Debt + Equity) × 100. High gearing = more debt = more financial risk.
+    </div>
+  </div>
+  <div class="slabel">Part A — Build a capital structure</div>
+  <div class="card">
+    <div class="card-h"><h3>⚙️ Adjust the mix — verdict updates live</h3></div>
+    <div class="card-b">
+      <div class="cs-wrap">
+        <div class="gear-item"><label>Debt (£m) <span id="csDebtVal">50</span></label><input type="range" id="csDebt" min="0" max="200" value="50" oninput="calcCS()"></div>
+        <div class="gear-item"><label>Equity (£m) <span id="csEquVal">100</span></label><input type="range" id="csEqu" min="1" max="200" value="100" oninput="calcCS()"></div>
+      </div>
+      <div style="margin:.9rem 0 .3rem;">
+        <div class="cs-bar-label"><span>Capital Structure Breakdown</span><span class="cs-pct" id="csGearPct">Gearing: 33.3%</span></div>
+        <div class="cs-track"><div class="cs-debt-bar" id="csDebtBar" style="width:33.3%"><span class="cs-bar-txt" id="csDebtTxt">Debt</span></div><div class="cs-eq-bar" id="csEquBar" style="width:66.7%"><span class="cs-eq-txt" id="csEquTxt">Equity</span></div></div>
+      </div>
+      <div class="cs-verdict" id="csVerdict">Adjust the sliders to see the verdict.</div>
+    </div>
+  </div>
+  <div class="slabel">Part B — Classify these capital structures</div>
+  <div class="scen">
+    <div class="scen-head"><h4>🏦 FinanceCo — Debt: £140m · Equity: £60m</h4><div class="stag">Scenario · Classify the capital structure</div></div>
+    <div class="scen-body">
+      <p>Specialist lender. Total debt £140m against equity £60m. Profits consistent but volatile — dependent on the credit cycle. What is their gearing and what does it mean?</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickCS(1,'l',this)">Low geared — under 50%</button>
+        <button class="schoice" onclick="pickCS(1,'m',this)">Moderate — around 50%</button>
+        <button class="schoice" onclick="pickCS(1,'h',this)">Highly geared — over 60%</button>
+      </div>
+      <div class="scen-reveal" id="csR1"><strong>Highly geared — 70% gearing.</strong> Debt ÷ (Debt + Equity) = 140 ÷ 200 = 70%. Given volatile profits, this structure is risky — a downturn could make interest payments difficult.</div>
+    </div>
+  </div>
+  <div class="scen">
+    <div class="scen-head"><h4>🛒 RetailPlc — Debt: £40m · Equity: £160m</h4><div class="stag">Scenario · Classify the capital structure</div></div>
+    <div class="scen-body">
+      <p>Well-established supermarket chain with steady cash flows and significant property assets. Debt of £40m against equity of £160m. How geared are they?</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickCS(2,'l',this)">Low geared — under 30%</button>
+        <button class="schoice" onclick="pickCS(2,'m',this)">Moderate — around 50%</button>
+        <button class="schoice" onclick="pickCS(2,'h',this)">Highly geared — over 60%</button>
+      </div>
+      <div class="scen-reveal" id="csR2"><strong>Low geared — 20% gearing.</strong> Debt ÷ (Debt + Equity) = 40 ÷ 200 = 20%. RetailPlc could comfortably take on significantly more debt if needed.</div>
+    </div>
+  </div>
+  <div class="slabel">Part C — Gearing Simulator</div>
+  <div class="card">
+    <div class="card-h"><h3>📐 Move the sliders — see the verdict live</h3></div>
+    <div class="card-b">
+      <div class="gear-wrap">
+        <div class="gear-item"><label>Total Debt (£m) <span id="gDebtVal">50</span></label><input type="range" id="gDebt" min="0" max="200" value="50" oninput="calcGear()"></div>
+        <div class="gear-item"><label>Total Equity (£m) <span id="gEquVal">100</span></label><input type="range" id="gEqu" min="1" max="200" value="100" oninput="calcGear()"></div>
+        <div class="gear-item"><label>Interest Rate (%) <span id="gRateVal">5</span></label><input type="range" id="gRate" min="1" max="20" value="5" oninput="calcGear()"></div>
+      </div>
+      <div style="margin:.7rem 0 .3rem;font-size:.72rem;font-family:'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);">Gearing Ratio</div>
+      <div class="gear-bar-wrap"><div class="gear-bar" id="gBar" style="width:33%"></div></div>
+      <div class="gear-verdict" id="gVerdict">Loading…</div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass8">✓ Activity 8 complete — Activity 9 is now unlocked.<div class="pb-sub">Gearing = Debt ÷ Total Capital. High gearing = high financial risk.</div></div>
+</div>
+
+<!-- ACTIVITY 9 — ADVISE THE CFO -->
+
+<div class="panel" id="p9">
+  <div class="intro" data-num="9">
+    <div class="intro-tag">Activity 9 of 10</div>
+    <h2>Advise the CFO</h2>
+    <p>You are now financial advisors. Three real companies, three real problems. Debate the options, pick a recommendation, then reveal what the experts say.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Team debate</span><span class="imeta">✦ All 3 to unlock</span></div>
+  </div>
+  <div class="kpill">
+    <span class="kpill-icon">⚖️</span>
+    <div class="kpill-body">Ask before recommending: <strong>1.</strong> Can they pay interest? <strong>2.</strong> Do they have security? <strong>3.</strong> How much debt already? <strong>4.</strong> What stage are they? <strong>5.</strong> What are market conditions?</div>
+  </div>
+  <div class="scen">
+    <div class="scen-head"><h4>🏭 MegaBuild Ltd — £40m Factory</h4><div class="stag">Profitable · Low gearing · Owns £60m property · Interest rate: 5% · Strong cash flows</div></div>
+    <div class="scen-body">
+      <p>Established UK manufacturer, consistent profits, significant property assets, very little existing debt. Want to build a new £40m factory. Bank willing to lend at 5%.</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickScen(1,'d',this)">Secured Debt (Loan/Mortgage)</button>
+        <button class="schoice" onclick="pickScen(1,'e',this)">Equity (Share Issue)</button>
+        <button class="schoice" onclick="pickScen(1,'m',this)">Mix of Both</button>
+      </div>
+      <div class="scen-reveal" id="sc1"><strong>Best answer: Secured Debt.</strong> Strong cash flows cover the interest. Property provides excellent security. Low existing gearing means there's room for more debt. A share issue would dilute existing shareholders unnecessarily. Remember: interest on the £40m loan is a <em>finance cost in the P&amp;L</em>.</div>
+    </div>
+  </div>
+  <div class="scen">
+    <div class="scen-head"><h4>🚀 NovaTech — AI Startup, Needs £5m</h4><div class="stag">2 years old · No profit · No assets · Banks declined · High-growth potential</div></div>
+    <div class="scen-body">
+      <p>Promising AI product but zero profits and nothing to offer as security. Three banks have already said no. Need £5m to hire engineers and scale up.</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickScen(2,'d',this)">Bank Loan (Debt)</button>
+        <button class="schoice" onclick="pickScen(2,'e',this)">Venture Capital (Equity)</button>
+        <button class="schoice" onclick="pickScen(2,'i',this)">Retained Earnings (Internal)</button>
+      </div>
+      <div class="scen-reveal" id="sc2"><strong>Only option: Venture Capital (Equity).</strong> No assets = no security for a loan. No profits = can't make interest payments. No retained earnings. VCs accept high risk in exchange for shares, betting on future growth.</div>
+    </div>
+  </div>
+  <div class="scen">
+    <div class="scen-head"><h4>🌿 GreenEnergy Plc — Already Listed, Tough Conditions</h4><div class="stag">Public company · Share price −30% · Gearing: 60% · Interest rates: 8% · Needs £20m</div></div>
+    <div class="scen-body">
+      <p>Listed on the stock exchange. Wants to build a wind farm but faces a 30% share price drop, 8% interest rates, and is already 60% debt-funded. Every option has a downside.</p>
+      <div class="scen-choices">
+        <button class="schoice" onclick="pickScen(3,'d',this)">Issue More Bonds (Debt)</button>
+        <button class="schoice" onclick="pickScen(3,'e',this)">Rights Issue (Equity to existing investors)</button>
+        <button class="schoice" onclick="pickScen(3,'w',this)">Wait — use Retained Earnings</button>
+      </div>
+      <div class="scen-reveal" id="sc3"><strong>No perfect answer — this is intentional.</strong> More debt at 8% with 60% gearing risks financial distress. A rights issue is viable even with a falling price. Waiting avoids both risks but delays the project. <em>Real CFOs face exactly this.</em></div>
+    </div>
+  </div>
+  <div class="pass-banner" id="pass9">✓ Activity 9 complete — Activity 10 is now unlocked.<div class="pb-sub">One more to go — the Buzzer Round.</div></div>
+</div>
+
+<!-- ACTIVITY 10 — BUZZER ROUND -->
+
+<div class="panel" id="p10">
+  <div class="intro" data-num="10">
+    <div class="intro-tag">Activity 10 of 10</div>
+    <h2>The Buzzer Round</h2>
+    <p>16 rapid-fire True / False statements. One person reads aloud — the whole group shouts TRUE or FALSE — then click to find out.</p>
+    <div class="intro-meta"><span class="imeta">⏱ 10 min</span><span class="imeta">👥 Competitive!</span><span class="imeta">✦ True / False</span></div>
+  </div>
+  <div class="buzz-score-row">
+    <span class="buzz-score">Score: <span id="buzzScore">0</span> / <span id="buzzTotal">16</span></span>
+    <span class="buzz-score">Question <span id="buzzQ">1</span> of 16</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="buzzBar" style="width:0%"></div></div>
+  <div class="buzzer-card" id="buzzCard">
+    <div class="bq-num" id="bqNum">Statement 1 of 16</div>
+    <div class="bq-txt" id="bqTxt">Loading…</div>
+    <div class="bq-context" id="bqCtx"></div>
+    <div class="buzzer-row">
+      <button class="b-true" id="btnTrue" onclick="buzzAns(true)">TRUE</button>
+      <button class="b-false" id="btnFalse" onclick="buzzAns(false)">FALSE</button>
+    </div>
+    <div class="bq-result" id="bqResult"></div>
+  </div>
+  <div class="buzzer-nav">
+    <button class="skip-btn" id="buzzNext" style="display:none;" onclick="nextBuzz()">Next Statement →</button>
+    <button class="btn-outline" onclick="resetBuzz()">↺ Start Again</button>
+  </div>
+  <div class="scoreboard" id="buzzSb">
+    <div class="sb-big" id="buzzFinal">0/16</div>
+    <div class="sb-label-final">Group Score</div>
+    <div class="sb-msg" id="buzzMsg"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* ═══ SCORE & UNLOCK ═══ */
+const PASS = 80;
+const partScores = {};
+const actUnlocked = {1:true};
+let totalPoints = 0;
+const ACT_PARTS = {1:['1a','1b'],2:['2a','2b'],3:['3a','3b'],4:['4a','4c'],5:['5a'],6:['6'],7:['7'],8:['8'],9:['9'],10:['10']};
+
+function recordPartScore(a,p,pct){
+if(!partScores[a])partScores[a]={};
+if((partScores[a][p]||0)>=pct)return false;
+partScores[a][p]=pct; return true;
+}
+function allPartsPassed(a){
+return (ACT_PARTS[a]||[]).every(p=>(partScores[a]||{})[p]>=PASS);
+}
+function actBest(a){
+const s=partScores[a]||{},pp=ACT_PARTS[a]||[];
+return pp.length?Math.round(pp.reduce((t,p)=>t+(s[p]||0),0)/pp.length):0;
+}
+function tryUnlockNext(a){
+if(!allPartsPassed(a))return;
+const pip=document.getElementById(‘pip’+a);
+if(pip){pip.textContent=‘✓’;pip.classList.remove(‘pip-active’,‘pip-locked’);pip.classList.add(‘pip-done’);}
+const bn=document.getElementById(‘pass’+a);
+if(bn)bn.classList.add(‘show’);
+totalPoints=0;
+for(let i=1;i<=10;i++)if(allPartsPassed(i))totalPoints+=actBest(i);
+document.getElementById(‘sbTotal’).textContent=Math.round(totalPoints);
+const n=a+1;
+if(n<=10&&!actUnlocked[n])unlockActivity(n);
+}
+function unlockActivity(n){
+actUnlocked[n]=true;
+const t=document.getElementById(‘tab’+n);
+if(t){t.classList.remove(‘locked’);t.onclick=()=>goTab(n,t);const st=t.querySelector(’.tab-status’);if(st)st.textContent=’’;}
+const p=document.getElementById(‘pip’+n);
+if(p&&!p.classList.contains(‘pip-done’)){p.classList.remove(‘pip-locked’);p.classList.add(‘pip-active’);p.textContent=n;}
+showToast(‘🔓 Activity ‘+n+’ unlocked!’,true);
+}
+function goTab(n,btn){
+if(!actUnlocked[n]){showToast(‘🔒 Score 80%+ on all parts of Activity ‘+(n-1)+’ first’,false);return;}
+document.querySelectorAll(’.panel’).forEach(p=>p.classList.remove(‘on’));
+document.querySelectorAll(’.tab-btn’).forEach(b=>b.classList.remove(‘on’));
+document.getElementById(‘p’+n).classList.add(‘on’);
+btn.classList.add(‘on’);
+window.scrollTo({top:0,behavior:‘smooth’});
+}
+function showToast(msg,good){
+const t=document.getElementById(‘toast’);
+t.textContent=msg; t.className=‘toast up’+(good?’’:’ bad-t’);
+clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove(‘up’),2500);
+}
+
+function attachTouchToChip(chip){
+chip.addEventListener(‘touchstart’,function(e){
+e.preventDefault();
+e.stopPropagation();
+_tChip=chip;
+const t=e.touches[0];
+const rect=chip.getBoundingClientRect();
+_tOffX=t.clientX-rect.left;
+_tOffY=t.clientY-rect.top;
+_tClone=chip.cloneNode(true);
+_tClone.style.cssText=‘position:fixed;left:’+rect.left+‘px;top:’+rect.top+‘px;width:’+rect.width+‘px;opacity:0.85;pointer-events:none;z-index:9999;transform:scale(1.08);box-shadow:0 12px 32px rgba(0,0,0,.6);transition:none;margin:0;’;
+document.body.appendChild(_tClone);
+chip.style.opacity=‘0.3’;
+},{passive:false});
+}
+
+/* ═══ DRAG & DROP ENGINE ═══ */
+let _dragged=null;
+const _enterCounts=new WeakMap();
+
+function setupChip(chip){
+chip.setAttribute(‘draggable’,‘true’);
+chip.addEventListener(‘dragstart’,e=>{
+_dragged=chip;
+e.dataTransfer.effectAllowed=‘move’;
+e.dataTransfer.setData(‘text/plain’,chip.textContent);
+requestAnimationFrame(()=>chip.classList.add(‘dragging’));
+});
+chip.addEventListener(‘dragend’,()=>{
+chip.classList.remove(‘dragging’);
+document.querySelectorAll(’.dzone,.chip-pool,.sys-box,.sys-pool,.pl-slot’).forEach(z=>{z.classList.remove(‘over’);_enterCounts.set(z,0);});
+_dragged=null;
+});
+// iOS touch
+attachTouchToChip(chip);
+}
+
+function setupZone(zone,acceptFn,dropFn){
+_enterCounts.set(zone,0);
+zone.addEventListener(‘dragenter’,e=>{
+if(!_dragged)return;
+if(acceptFn&&!acceptFn(_dragged,zone))return;
+e.preventDefault();
+const c=(_enterCounts.get(zone)||0)+1;_enterCounts.set(zone,c);
+if(c===1)zone.classList.add(‘over’);
+});
+zone.addEventListener(‘dragleave’,()=>{
+if(!_dragged)return;
+const c=Math.max(0,(_enterCounts.get(zone)||0)-1);_enterCounts.set(zone,c);
+if(c===0)zone.classList.remove(‘over’);
+});
+zone.addEventListener(‘dragover’,e=>{
+if(!_dragged)return;
+if(acceptFn&&!acceptFn(_dragged,zone))return;
+e.preventDefault(); e.dataTransfer.dropEffect=‘move’;
+});
+zone.addEventListener(‘drop’,e=>{
+e.preventDefault();_enterCounts.set(zone,0);zone.classList.remove(‘over’);
+if(!_dragged)return;
+if(acceptFn&&!acceptFn(_dragged,zone))return;
+dropFn(_dragged,zone);_dragged=null;
+});
+}
+
+function updateCheckBtn(poolId,btnId){
+const pool=document.getElementById(poolId),btn=document.getElementById(btnId);
+if(!pool||!btn)return;
+const empty=pool.querySelectorAll(’.chip’).length===0;
+btn.disabled=!empty; btn.classList.toggle(‘btn-waiting’,!empty);
+}
+function watchPool(poolId,btnId){
+const pool=document.getElementById(poolId);
+if(!pool)return;
+updateCheckBtn(poolId,btnId);
+new MutationObserver(()=>updateCheckBtn(poolId,btnId)).observe(pool,{childList:true});
+}
+
+function initAllDrag(){
+document.querySelectorAll(’.chip-pool,.sys-pool’).forEach(pool=>{
+setupZone(pool,chip=>chip.parentElement!==pool,(chip,zone)=>{chip.classList.remove(‘ok’,‘no’);zone.appendChild(chip);});
+});
+document.querySelectorAll(’.dzone’).forEach(zone=>{
+setupZone(zone,()=>true,(chip,zone)=>{chip.classList.remove(‘ok’,‘no’);zone.appendChild(chip);});
+});
+document.querySelectorAll(’.sys-box’).forEach(box=>{
+setupZone(box,()=>true,(chip,zone)=>{
+chip.classList.remove(‘ok’,‘no’);
+zone.querySelector(’.examples’).appendChild(chip);
+zone.classList.add(‘filled’);
+setupChip(chip);
+});
+});
+document.querySelectorAll(’.pl-slot’).forEach(slot=>{
+setupZone(slot,()=>true,(chip,zone)=>{
+const ex=zone.querySelector(’.chip’);
+if(ex){ex.classList.remove(‘ok’,‘no’);document.getElementById(‘plPool’).appendChild(ex);}
+const h=zone.querySelector(’.pl-slot-hint’);if(h)h.style.display=‘none’;
+chip.classList.remove(‘ok’,‘no’);zone.appendChild(chip);zone.classList.add(‘filled’);
+});
+});
+document.querySelectorAll(’.chip[draggable]’).forEach(setupChip);
+watchPool(‘pool1a’,‘chk1a’); watchPool(‘pool1b’,‘chk1b’);
+watchPool(‘pool2a’,‘chk2a’); watchPool(‘pool4a’,‘chk4a’);
+watchPool(‘sysPool’,‘chk3a’); watchPool(‘plPool’,‘chk5a’);
+}
+
+/* ═══ TOUCH DRAG — iOS-first ═══ */
+let _tChip=null,_tClone=null,_tOffX=0,_tOffY=0;
+
+function initTouchDrag(){
+document.addEventListener(‘touchstart’,function(e){},{ passive:false });
+document.addEventListener(‘touchmove’,function(e){
+if(!_tClone)return;
+e.preventDefault();
+const t=e.touches[0];
+_tClone.style.left=(t.clientX-_tOffX)+‘px’;
+_tClone.style.top=(t.clientY-_tOffY)+‘px’;
+_tClone.style.visibility=‘hidden’;
+const el=document.elementFromPoint(t.clientX,t.clientY);
+_tClone.style.visibility=’’;
+document.querySelectorAll(’.dzone.over,.chip-pool.over,.sys-box.over,.sys-pool.over,.pl-slot.over’).forEach(z=>z.classList.remove(‘over’));
+if(el){const z=el.closest(’.dzone,.chip-pool,.sys-box,.sys-pool,.pl-slot’);if(z)z.classList.add(‘over’);}
+},{passive:false});
+
+document.addEventListener(‘touchend’,function(e){
+if(!_tChip)return;
+if(_tClone){_tClone.remove();_tClone=null;}
+_tChip.style.opacity=’’;
+document.querySelectorAll(’.dzone.over,.chip-pool.over,.sys-box.over,.sys-pool.over,.pl-slot.over’).forEach(z=>z.classList.remove(‘over’));
+const t=e.changedTouches[0];
+const el=document.elementFromPoint(t.clientX,t.clientY);
+const chip=_tChip; _tChip=null;
+if(!el)return;
+const zone=el.closest(’.dzone,.chip-pool,.sys-box,.sys-pool,.pl-slot’);
+if(!zone||zone===chip.parentElement)return;
+chip.classList.remove(‘ok’,‘no’);
+if(zone.classList.contains(‘sys-box’)){zone.querySelector(’.examples’).appendChild(chip);zone.classList.add(‘filled’);attachTouchToChip(chip);}
+else if(zone.classList.contains(‘pl-slot’)){const ex=zone.querySelector(’.chip’);if(ex){ex.classList.remove(‘ok’,‘no’);document.getElementById(‘plPool’).appendChild(ex);}const h=zone.querySelector(’.pl-slot-hint’);if(h)h.style.display=‘none’;zone.appendChild(chip);}
+else zone.appendChild(chip);
+},{passive:false});
+}
+
+/* ═══ INLINE DRAG RESULT — replaces blocking modal for drag activities ═══ */
+const DROP_EXPLS = {
+‘1a’:’<strong>Debt</strong> = borrowed money you must repay with interest — bank loans, overdrafts, mortgages, debentures, bonds, trade credit. <strong>Equity</strong> = owner's capital — share issues, retained earnings, venture capital, sale of assets. Key: debt creates a legal obligation to pay interest. Equity does not.’,
+‘1b’:’<strong>Short-term</strong> (days–months): overdraft, trade credit, debt factoring — for working capital gaps. <strong>Medium-term</strong> (1–5 years): leasing, hire purchase, medium loans — for equipment. <strong>Long-term</strong> (5+ years): mortgages, share issues, debentures, grants — for major assets and permanent capital.’,
+‘2a’:’<strong>Internal</strong> = from within: retained earnings, working capital optimisation, sale of assets. <strong>External</strong> = from outside: banks, investors, suppliers (trade credit), government (grants), venture capital, bond/share markets.’,
+‘3a’:’<strong>Institutions</strong> (banks, funds, insurance) channel money. <strong>Markets</strong> (stock exchange, forex, bond market) are trading venues. <strong>Instruments</strong> (shares, bonds, futures) are the financial products. <strong>Services</strong> (advice, brokerage, insurance) support the system.’,
+‘4a’:’<strong>Bonds</strong> are typically secured on assets — lower risk, lower interest rate. In insolvency, bondholders have first claim. <strong>Debentures</strong> are typically unsecured — riskier, so investors demand a higher interest rate. Both appear as liabilities on the balance sheet; their interest is a finance cost in the P&L.’,
+‘5a’:‘Correct P&L order: <strong>1. Revenue</strong> − <strong>2. Cost of Sales</strong> = <strong>3. Gross Profit</strong> − <strong>4. Operating Expenses</strong> = <strong>5. Operating Profit</strong> − <strong>6. Finance Costs (Interest)</strong> = <strong>7. Net Profit before Tax.</strong> Interest sits BELOW operating profit — it's a financing decision, not operating.’,
+};
+const ACT_PART_MAP = {‘1a’:1,‘1b’:1,‘2a’:2,‘3a’:3,‘4a’:4,‘5a’:5};
+
+function checkDrop(id,zones){
+let ok=0,tot=0,items=[];
+zones.forEach(zid=>{
+const z=document.getElementById(zid);if(!z)return;
+z.querySelectorAll(’.chip’).forEach(c=>{
+tot++;
+const ans=c.dataset.ans||c.dataset.sys||c.dataset.plid;
+const match=ans===z.dataset.col;
+c.classList.remove(‘ok’,‘no’);c.classList.add(match?‘ok’:‘no’);
+if(match)ok++; items.push({label:c.textContent.trim(),correct:match});
+});
+});
+if(tot===0){showToast(‘Drag some items first!’,false);return;}
+const pct=Math.round(ok/tot*100);
+const passed=pct>=PASS;
+const actNum=ACT_PART_MAP[id];
+recordPartScore(actNum,id,pct);
+
+// ── Show INLINE result — chips are already colored so students see what’s right/wrong ──
+const drEl=document.getElementById(‘dr’+id.replace(/[^0-9]/g,’’).padStart(1,’’)+(id.slice(-1).match(/[a-z]/)?id.slice(-1):’’));
+const drId=‘dr’+id;
+const dr=document.getElementById(drId);
+if(dr){
+dr.className=’drag-result show ’+(passed?‘dr-pass’:‘dr-fail’);
+const wrongItems=items.filter(i=>!i.correct);
+dr.innerHTML=` <div class="dr-top"> <div class="dr-score">${pct}%</div> <div> <div class="dr-verdict">${passed?'✓ Passed!':'✗ Not quite — '+wrongItems.length+' wrong'}</div> <div style="font-size:.78rem;color:var(--silver);margin-top:.15rem;">${ok} of ${tot} correct${passed?' — great work!':'. Green = correct · Red = wrong. Reset and try again.'}</div> </div> </div> <div class="dr-expl">${DROP_EXPLS[id]||''}</div> ${!passed?`<div class="dr-actions"><button class="dr-retry" onclick="resetDrop('${id}','pool${id.replace(/[a-z]/g,'')}${id.slice(-1)}',${JSON.stringify(zones)})">↺ Try Again</button></div>`:''} `;
+if(passed)setTimeout(()=>tryUnlockNext(actNum),400);
+}
+}
+
+function resetDrop(id,poolId,zones){
+const pool=document.getElementById(poolId);
+zones.forEach(zid=>{const z=document.getElementById(zid);if(!z)return;z.querySelectorAll(’.chip’).forEach(c=>{c.classList.remove(‘ok’,‘no’);pool.appendChild(c);});});
+const dr=document.getElementById(‘dr’+id);if(dr)dr.className=‘drag-result’;
+updateCheckBtn(poolId,‘chk’+id);
+}
+
+/* ═══ ACT 3 SYS MAP ═══ */
+function checkSys(){
+let ok=0,tot=0,items=[];
+[‘sys-inst’,‘sys-mkt’,‘sys-instr’,‘sys-svc’].forEach(id=>{
+const box=document.getElementById(id);
+box.querySelectorAll(’.chip’).forEach(c=>{
+tot++;const match=c.dataset.sys===box.dataset.sys;
+c.classList.remove(‘ok’,‘no’);c.classList.add(match?‘ok’:‘no’);
+if(match)ok++; items.push({label:c.textContent.trim(),correct:match});
+});
+});
+if(tot===0){showToast(‘Drag some items first!’,false);return;}
+const pct=Math.round(ok/tot*100),passed=pct>=PASS;
+recordPartScore(3,‘3a’,pct);
+const dr=document.getElementById(‘dr3a’);
+if(dr){
+dr.className=‘drag-result show ‘+(passed?‘dr-pass’:‘dr-fail’);
+dr.innerHTML=`<div class="dr-top"><div class="dr-score">${pct}%</div><div><div class="dr-verdict">${passed?'✓ Passed!':'✗ Not quite'}</div><div style="font-size:.78rem;color:var(--silver);margin-top:.15rem;">${ok} of ${tot} correct. Coloured chips show results.</div></div></div><div class="dr-expl">${DROP_EXPLS['3a']}</div>`;
+if(passed)setTimeout(()=>tryUnlockNext(3),400);
+}
+}
+function resetSys(){
+const pool=document.getElementById(‘sysPool’);
+[‘sys-inst’,‘sys-mkt’,‘sys-instr’,‘sys-svc’].forEach(id=>document.getElementById(id).querySelectorAll(’.chip’).forEach(c=>{c.classList.remove(‘ok’,‘no’);pool.appendChild(c);}));
+const dr=document.getElementById(‘dr3a’);if(dr)dr.className=‘drag-result’;
+}
+
+/* ═══ NEUTRAL MATCH GAME — Activity 2 IE ═══ */
+let _pairsIE={}, _selTermIE=null;
+const TOTAL_IE=6;
+
+function pickT_ie(el){
+if(el.classList.contains(‘m-confirmed’))return;
+document.querySelectorAll(’.term-ie’).forEach(t=>t.classList.remove(‘sel-t’));
+el.classList.add(‘sel-t’);_selTermIE=el;
+}
+function pickD_ie(el){
+if(el.classList.contains(‘m-confirmed’))return;
+if(!_selTermIE)return;
+const termMid=_selTermIE.dataset.mid, defMid=el.dataset.mid;
+// Unlink old pairing for this term
+if(_pairsIE[termMid]){
+const oldDef=document.querySelector(`.def-ie[data-mid="${_pairsIE[termMid]}"]`);
+if(oldDef)oldDef.classList.remove(‘m-paired’);
+}
+// Unlink any term already pointing to this def
+for(const[t,d]of Object.entries(_pairsIE)){
+if(d===defMid&&t!==termMid){delete _pairsIE[t];const ot=document.querySelector(`.term-ie[data-mid="${t}"]`);if(ot)ot.classList.remove(‘m-paired’);}
+}
+_pairsIE[termMid]=defMid;
+_selTermIE.classList.remove(‘sel-t’);_selTermIE.classList.add(‘m-paired’);
+el.classList.remove(‘sel-d’);el.classList.add(‘m-paired’);
+_selTermIE=null;
+document.querySelectorAll(’.def-ie’).forEach(d=>d.classList.remove(‘sel-d’));
+const count=Object.keys(_pairsIE).length;
+document.getElementById(‘m2cnt_ie’).textContent=count+’ / ‘+TOTAL_IE+’ paired’;
+document.getElementById(‘m2bar_ie’).style.width=(count/TOTAL_IE*100)+’%’;
+const sb=document.getElementById(‘submitMatchIE’);
+if(sb)sb.style.display=count>0?‘inline-block’:‘none’;
+}
+function submitMatch_ie(){
+if(Object.keys(_pairsIE).length<TOTAL_IE){showToast(‘Pair all ‘+TOTAL_IE+’ terms first!’,false);return;}
+let correct=0;
+for(const[termMid,defMid]of Object.entries(_pairsIE)){
+const isOk=termMid===defMid;
+const te=document.querySelector(`.term-ie[data-mid="${termMid}"]`);
+const de=document.querySelector(`.def-ie[data-mid="${defMid}"]`);
+[te,de].forEach(e=>{if(!e)return;e.classList.remove(‘m-paired’,‘sel-t’,‘sel-d’);e.classList.add(isOk?‘done’:‘m-wrong’,‘m-confirmed’);e.onclick=null;});
+if(isOk)correct++;
+}
+const pct=Math.round(correct/TOTAL_IE*100);
+document.getElementById(‘m2cnt_ie’).textContent=correct+’ / ‘+TOTAL_IE+’ correct’;
+document.getElementById(‘submitMatchIE’).style.display=‘none’;
+recordPartScore(2,‘2b’,pct);
+showMatchResult(‘IE’,pct,correct,TOTAL_IE,’<strong>Retained earnings</strong> = profits kept in the business. <strong>Working capital management</strong> = using existing assets/liabilities more efficiently. <strong>Sale of assets</strong> = converts non-current assets to cash (internal). <strong>Trade credit</strong> = external short-term finance from suppliers. <strong>Venture capital</strong> = external equity. <strong>External finance</strong> = any finance from outside.’,()=>tryUnlockNext(2));
+}
+function resetMatch_ie(){
+_selTermIE=null;_pairsIE={};
+document.getElementById(‘m2cnt_ie’).textContent=‘0 / 6’;
+document.getElementById(‘m2bar_ie’).style.width=‘0%’;
+const sb=document.getElementById(‘submitMatchIE’);if(sb)sb.style.display=‘none’;
+document.querySelectorAll(’.term-ie’).forEach(el=>{el.className=‘mitem term-ie’;el.onclick=()=>pickT_ie(el);});
+document.querySelectorAll(’.def-ie’).forEach(el=>{el.className=‘mitem def-ie’;el.onclick=()=>pickD_ie(el);});
+}
+
+/* ═══ NEUTRAL MATCH GAME — Activity 3 ═══ */
+let _pairs3={}, _selTerm3=null;
+const TOTAL_3=8;
+
+function pickT(el){
+if(el.classList.contains(‘m-confirmed’))return;
+document.querySelectorAll(’.term-i’).forEach(t=>t.classList.remove(‘sel-t’));
+el.classList.add(‘sel-t’);_selTerm3=el;
+}
+function pickD(el){
+if(el.classList.contains(‘m-confirmed’))return;
+if(!_selTerm3)return;
+const termMid=_selTerm3.dataset.mid, defMid=el.dataset.mid;
+if(_pairs3[termMid]){const od=document.querySelector(`.def-i[data-mid="${_pairs3[termMid]}"]`);if(od)od.classList.remove(‘m-paired’);}
+for(const[t,d]of Object.entries(_pairs3)){if(d===defMid&&t!==termMid){delete _pairs3[t];const ot=document.querySelector(`.term-i[data-mid="${t}"]`);if(ot)ot.classList.remove(‘m-paired’);}}
+_pairs3[termMid]=defMid;
+_selTerm3.classList.remove(‘sel-t’);_selTerm3.classList.add(‘m-paired’);
+el.classList.remove(‘sel-d’);el.classList.add(‘m-paired’);
+_selTerm3=null;
+document.querySelectorAll(’.def-i’).forEach(d=>d.classList.remove(‘sel-d’));
+const count=Object.keys(_pairs3).length;
+document.getElementById(‘m2cnt’).textContent=count+’ / ‘+TOTAL_3+’ paired’;
+document.getElementById(‘m2bar’).style.width=(count/TOTAL_3*100)+’%’;
+const sb=document.getElementById(‘submitMatch3’);if(sb)sb.style.display=count>0?‘inline-block’:‘none’;
+}
+function submitMatch3(){
+if(Object.keys(_pairs3).length<TOTAL_3){showToast(‘Pair all ‘+TOTAL_3+’ terms first!’,false);return;}
+let correct=0;
+for(const[termMid,defMid]of Object.entries(_pairs3)){
+const isOk=termMid===defMid;
+const te=document.querySelector(`.term-i[data-mid="${termMid}"]`);
+const de=document.querySelector(`.def-i[data-mid="${defMid}"]`);
+[te,de].forEach(e=>{if(!e)return;e.classList.remove(‘m-paired’,‘sel-t’,‘sel-d’);e.classList.add(isOk?‘done’:‘m-wrong’,‘m-confirmed’);e.onclick=null;});
+if(isOk)correct++;
+}
+const pct=Math.round(correct/TOTAL_3*100);
+document.getElementById(‘m2cnt’).textContent=correct+’ / ‘+TOTAL_3+’ correct’;
+document.getElementById(‘submitMatch3’).style.display=‘none’;
+recordPartScore(3,‘3b’,pct);
+showMatchResult(‘3’,pct,correct,TOTAL_3,’<strong>IPO</strong> = primary market, company sells new shares. <strong>Underwriter</strong> = investment bank managing the IPO. <strong>Market cap</strong> = total shares × price. <strong>Primary market</strong> = new securities, company gets money. <strong>Secondary market</strong> = existing shares traded, company gets nothing. <strong>Gearing</strong> = debt ratio. <strong>Debenture</strong> = unsecured long-term debt. <strong>Retained earnings</strong> = profits kept inside.’,()=>tryUnlockNext(3));
+}
+function resetMatch3(){
+_selTerm3=null;_pairs3={};
+document.getElementById(‘m2cnt’).textContent=‘0 / 8’;
+document.getElementById(‘m2bar’).style.width=‘0%’;
+const sb=document.getElementById(‘submitMatch3’);if(sb)sb.style.display=‘none’;
+document.querySelectorAll(’.term-i’).forEach(el=>{el.className=‘mitem term-i’;el.onclick=()=>pickT(el);});
+document.querySelectorAll(’.def-i’).forEach(el=>{el.className=‘mitem def-i’;el.onclick=()=>pickD(el);});
+}
+
+/* ─ shared match result inline display ─ */
+function showMatchResult(key,pct,correct,total,expl,onPass){
+const passed=pct>=PASS;
+const existing=document.getElementById(‘matchResult’+key);
+if(existing)existing.remove();
+const div=document.createElement(‘div’);
+div.id=‘matchResult’+key;
+div.className=‘drag-result show ‘+(passed?‘dr-pass’:‘dr-fail’);
+div.style.marginTop=‘1rem’;
+div.innerHTML=`<div class="dr-top"> <div class="dr-score">${pct}%</div> <div> <div class="dr-verdict">${passed?'✓ Passed!':'✗ Not quite — '+(total-correct)+' wrong'}</div> <div style="font-size:.78rem;color:var(--silver);margin-top:.15rem;">${correct} of ${total} pairs correct. ${passed?'':'Green = correct · Red cross = wrong. Reset and try again.'}</div> </div> </div> <div class="dr-expl">${expl}</div>`;
+const resetBtn=document.querySelector(’#matchResult’+key)?.nextSibling;
+const container=document.querySelector(’.submit-match-btn’)?.parentElement;
+// Append to the card-b of the relevant match game
+const refs={‘IE’:‘submitMatchIE’,‘3’:‘submitMatch3’};
+const anchor=document.getElementById(refs[key]);
+if(anchor&&anchor.parentElement)anchor.parentElement.appendChild(div);
+if(passed&&onPass)setTimeout(onPass,400);
+else if(!passed)showToast(‘✗ ‘+correct+’/’+total+’ — reset and try again’,false);
+}
+
+/* ═══ ACT 4 BONDS SCENARIO ═══ */
+function pickScen4(n,ch,btn){
+btn.closest(’.scen-body’).querySelectorAll(’.schoice’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+document.getElementById(‘sc4_’+n).classList.add(‘show’);
+recordPartScore(4,‘4c’,100);
+setTimeout(()=>tryUnlockNext(4),400);
+}
+
+/* ═══ ACT 5 P&L BUILDER ═══ */
+function checkPL(){
+let ok=0,items=[];
+for(let i=1;i<=7;i++){
+const slot=document.getElementById(‘ps’+i),chip=slot.querySelector(’.chip’);
+slot.classList.remove(‘ok-slot’,‘no-slot’);
+if(chip){const match=chip.dataset.plid===slot.dataset.ex;chip.classList.add(match?‘ok’:‘no’);slot.classList.add(match?‘ok-slot’:‘no-slot’);if(match)ok++;items.push({label:’Pos ‘+i+’: ’+chip.textContent.trim(),correct:match});}
+else{slot.classList.add(‘no-slot’);items.push({label:‘Pos ‘+i+’: empty’,correct:false});}
+}
+const pct=Math.round(ok/7*100),passed=pct>=PASS;
+recordPartScore(5,‘5a’,pct);
+const dr=document.getElementById(‘dr5a’);
+if(dr){
+dr.className=‘drag-result show ‘+(passed?‘dr-pass’:‘dr-fail’);
+dr.innerHTML=`<div class="dr-top"><div class="dr-score">${pct}%</div><div><div class="dr-verdict">${passed?'✓ Perfect P&L order!':'✗ '+ok+'/7 correct'}</div><div style="font-size:.78rem;color:var(--silver);margin-top:.15rem;">Green slots = correct position. Red = wrong.</div></div></div><div class="dr-expl">${DROP_EXPLS['5a']}</div>`;
+if(passed)setTimeout(()=>tryUnlockNext(5),400);
+}
+}
+function resetPL(){
+const pool=document.getElementById(‘plPool’);
+for(let i=1;i<=7;i++){const s=document.getElementById(‘ps’+i),c=s.querySelector(’.chip’);if(c){c.classList.remove(‘ok’,‘no’);pool.appendChild(c);}s.classList.remove(‘filled’,‘ok-slot’,‘no-slot’);const h=s.querySelector(’.pl-slot-hint’);if(h)h.style.display=’’;}
+const dr=document.getElementById(‘dr5a’);if(dr)dr.className=‘drag-result’;
+}
+function calcPL(){
+const rev=parseFloat(document.getElementById(‘plRev’).value)||0;
+const cos=parseFloat(document.getElementById(‘plCos’).value)||0;
+const opex=parseFloat(document.getElementById(‘plOpex’).value)||0;
+const loan=parseFloat(document.getElementById(‘plLoan’).value)||0;
+const rate=parseFloat(document.getElementById(‘plRate’).value)||0;
+const gp=rev-cos,op=gp-opex,fc=loan*(rate/100),np=op-fc;
+const f=n=>(n||n===0)?‘£’+n.toFixed(1)+‘m’:’—’;
+document.getElementById(‘r_gp’).textContent=(rev||cos)?f(gp):’—’;
+document.getElementById(‘r_op’).textContent=(rev||opex)?f(op):’—’;
+document.getElementById(‘r_fc’).textContent=(loan||rate)?f(fc):’—’;
+document.getElementById(‘r_np’).textContent=rev?f(np):’—’;
+if(rev&&loan)document.getElementById(‘divNote’).style.display=‘block’;
+}
+
+/* ═══ ACT 6 IPO ═══ */
+function fmtD(n){’$’+Math.round(n).toLocaleString(‘en-US’);}
+const _fmtD=n=>’$’+Math.round(n).toLocaleString(‘en-US’);
+function showIPO(id,sh,pr,fp,ex){
+const g=sh*pr,u=g*fp,n=g-u-ex;
+document.getElementById(id+‘r1’).textContent=_fmtD(g);
+document.getElementById(id+‘r2’).textContent=_fmtD(u);
+document.getElementById(id+‘r3’).textContent=_fmtD(n);
+document.getElementById(id+‘res’).style.display=‘block’;
+if(document.getElementById(‘ares’).style.display!==‘none’&&document.getElementById(‘bres’).style.display!==‘none’){
+recordPartScore(6,‘6’,100);setTimeout(()=>tryUnlockNext(6),400);
+}
+}
+function checkIPO(id,sh,pr,fp,ex){showIPO(id,sh,pr,fp,ex);}
+function revIPO(id,sh,pr,fp,ex){showIPO(id,sh,pr,fp,ex);}
+function calcOwn(){
+const s=parseFloat(document.getElementById(‘cs’).value)||0;
+const p=parseFloat(document.getElementById(‘cp’).value)||0;
+const f=parseFloat(document.getElementById(‘cf’).value)||0;
+const e=parseFloat(document.getElementById(‘ce’).value)||0;
+const es=parseFloat(document.getElementById(‘ces’).value)||0;
+const pp=parseFloat(document.getElementById(‘cpp’).value)||0;
+if(s&&p){const g=s*p,u=g*(f/100),n=g-u-e,tot=es+s,mc=tot*pp;
+document.getElementById(‘cr1’).textContent=_fmtD(g);
+document.getElementById(‘cr2’).textContent=_fmtD(u);
+document.getElementById(‘cr3’).textContent=_fmtD(n);
+document.getElementById(‘cr4’).textContent=tot.toLocaleString(‘en-US’)+’ shares’;
+document.getElementById(‘cr5’).textContent=mc?_fmtD(mc):’(enter post-IPO price)’;
+}
+}
+
+/* ═══ ACT 7 FACTORS ═══ */
+function toggleFactor(el,id){
+const rev=document.getElementById(id),isOpen=rev.classList.contains(‘show’);
+document.querySelectorAll(’.factor-reveal’).forEach(r=>r.classList.remove(‘show’));
+document.querySelectorAll(’.factor-item’).forEach(i=>i.classList.remove(‘f-sel’));
+if(!isOpen){rev.classList.add(‘show’);el.classList.add(‘f-sel’);}
+}
+function pickScenF(n,ch,btn){
+btn.closest(’.scen-body’).querySelectorAll(’.schoice’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+document.getElementById(‘scF’+n).classList.add(‘show’);
+recordPartScore(7,‘7’,100);
+setTimeout(()=>tryUnlockNext(7),400);
+}
+
+/* ═══ ACT 8 CAPITAL STRUCTURE ═══ */
+function calcCS(){
+const d=parseFloat(document.getElementById(‘csDebt’).value);
+const eq=parseFloat(document.getElementById(‘csEqu’).value);
+document.getElementById(‘csDebtVal’).textContent=d;
+document.getElementById(‘csEquVal’).textContent=eq;
+const total=d+eq,gPct=(d/total*100).toFixed(1),ePct=(eq/total*100).toFixed(1);
+document.getElementById(‘csGearPct’).textContent=‘Gearing: ‘+gPct+’%’;
+document.getElementById(‘csDebtBar’).style.width=gPct+’%’;
+document.getElementById(‘csEquBar’).style.width=ePct+’%’;
+document.getElementById(‘csDebtTxt’).textContent=gPct>8?‘Debt ‘+gPct+’%’:’’;
+document.getElementById(‘csEquTxt’).textContent=ePct>8?‘Equity ‘+ePct+’%’:’’;
+let v=’’;
+if(gPct<25)v=’<strong>Low gearing (’+gPct+’%).</strong> Primarily equity-funded. Very low financial risk.’;
+else if(gPct<50)v=’<strong>Moderate gearing (’+gPct+’%).</strong> Balanced capital structure.’;
+else if(gPct<70)v=’<strong>Moderate-to-high gearing (’+gPct+’%).</strong> More than half the capital is borrowed.’;
+else v=’<strong>⚠️ Highly geared (’+gPct+’%).</strong> Heavily reliant on debt. Financial distress risk is significant.’;
+document.getElementById(‘csVerdict’).innerHTML=v;
+}
+const _csDone={};
+function pickCS(n,ch,btn){
+btn.closest(’.scen-body’).querySelectorAll(’.schoice’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+document.getElementById(‘csR’+n).classList.add(‘show’);
+_csDone[n]=true;
+if(_csDone[1]&&_csDone[2]){recordPartScore(8,‘8’,100);setTimeout(()=>tryUnlockNext(8),400);}
+}
+function calcGear(){
+const d=parseFloat(document.getElementById(‘gDebt’).value);
+const eq=parseFloat(document.getElementById(‘gEqu’).value);
+const r=parseFloat(document.getElementById(‘gRate’).value);
+document.getElementById(‘gDebtVal’).textContent=d;
+document.getElementById(‘gEquVal’).textContent=eq;
+document.getElementById(‘gRateVal’).textContent=r;
+const g=(d/(d+eq)*100).toFixed(1),interest=(d*r/100).toFixed(1);
+document.getElementById(‘gBar’).style.width=Math.min(g,100)+’%’;
+let v=’’,risk=’’;
+if(g<25){v=‘Very low gearing.’;risk=‘Safe — primarily equity-funded.’;}
+else if(g<50){v=‘Low-to-moderate gearing.’;risk=‘Healthy — reasonable mix.’;}
+else if(g<70){v=‘Moderate-to-high gearing.’;risk=‘Getting risky — over half the capital is borrowed.’;}
+else{v=‘⚠️ Highly geared.’;risk=‘Dangerous — a drop in profits could make interest impossible to pay.’;}
+document.getElementById(‘gVerdict’).innerHTML=`<strong>Gearing: ${g}% &nbsp;|&nbsp; Annual Interest: £${interest}m</strong><br>${v} ${risk}`;
+}
+
+/* ═══ ACT 9 SCENARIOS ═══ */
+const _scenDone={};
+function pickScen(n,ch,btn){
+btn.closest(’.scen-body’).querySelectorAll(’.schoice’).forEach(b=>b.classList.remove(‘active’));
+btn.classList.add(‘active’);
+document.getElementById(‘sc’+n).classList.add(‘show’);
+_scenDone[n]=true;
+if(_scenDone[1]&&_scenDone[2]&&_scenDone[3]){recordPartScore(9,‘9’,100);setTimeout(()=>tryUnlockNext(9),400);}
+}
+
+/* ═══ ACT 10 BUZZER ROUND ═══ */
+const BUZZ=[
+{q:‘Interest on a bank loan appears as an operating expense in the P&L.’,a:false,exp:‘FALSE. Interest is a finance cost — it appears BELOW operating profit.’},
+{q:‘Dividends paid to shareholders appear in the Profit & Loss statement.’,a:false,exp:‘FALSE. Dividends come out of retained earnings on the balance sheet, not the P&L.’},
+{q:‘A debenture is usually unsecured debt — backed only by the company's creditworthiness.’,a:true,exp:‘TRUE. Debentures are typically unsecured, making them riskier than bonds.’},
+{q:‘An IPO takes place in the secondary market.’,a:false,exp:‘FALSE. An IPO is a PRIMARY market event — the company issues NEW shares directly.’},
+{q:‘Retained earnings are profits kept inside the business instead of paid out as dividends.’,a:true,exp:‘TRUE. Retained earnings are the most common internal source of finance.’},
+{q:‘A highly geared company has more equity than debt in its capital structure.’,a:false,exp:‘FALSE. A highly geared company relies MORE on debt. High gearing = high financial risk.’},
+{q:‘Market capitalisation = Total Shares Outstanding × Post-IPO Share Price.’,a:true,exp:‘TRUE. Market cap = Total Shares × Share Price.’},
+{q:‘A bank overdraft is an example of long-term external finance.’,a:false,exp:‘FALSE. An overdraft is SHORT-TERM external finance.’},
+{q:‘When investors trade shares on the stock exchange, the company receives new money.’,a:false,exp:‘FALSE. Secondary market trading brings NO new money to the company.’},
+{q:‘Venture capital is a form of equity finance, not debt.’,a:true,exp:‘TRUE. Venture capitalists invest in exchange for shares (equity).’},
+{q:‘The underwriter's fee is deducted from gross proceeds before the company receives its net proceeds.’,a:true,exp:‘TRUE. Net Proceeds = Gross Proceeds − Underwriting Fee − Other Expenses.’},
+{q:‘A company can always choose freely between debt and equity, regardless of its situation.’,a:false,exp:‘FALSE. The choice is constrained by gearing, profitability, security, and market conditions.’},
+{q:‘Retained earnings, working capital, and sale of assets are all examples of internal finance.’,a:true,exp:‘TRUE. All three come from within the business.’},
+{q:‘A bond is higher risk to the investor than a debenture, because bonds have higher interest rates.’,a:false,exp:‘FALSE. Debentures are higher risk — typically unsecured. Bonds are often secured on assets.’},
+{q:‘Capital structure refers to the mix of debt and equity a business uses to fund itself.’,a:true,exp:‘TRUE. Gearing measures this mix.’},
+{q:‘The availability of security (assets to pledge) is one of the key factors in choosing finance.’,a:true,exp:‘TRUE. Secured loans require collateral. Companies with no physical assets struggle to access cheap secured loans.’},
+];
+
+let buzzIdx=0,buzzCorrect=0,buzzAnswered=false;
+function renderBuzz(){
+const q=BUZZ[buzzIdx];
+document.getElementById(‘bqNum’).textContent=‘Statement ‘+(buzzIdx+1)+’ of ‘+BUZZ.length;
+document.getElementById(‘bqTxt’).textContent=q.q;
+document.getElementById(‘bqCtx’).textContent=’’;
+document.getElementById(‘bqResult’).className=‘bq-result’;
+document.getElementById(‘bqResult’).textContent=’’;
+document.getElementById(‘btnTrue’).disabled=false;
+document.getElementById(‘btnFalse’).disabled=false;
+document.getElementById(‘btnTrue’).style.opacity=‘1’;
+document.getElementById(‘btnFalse’).style.opacity=‘1’;
+document.getElementById(‘buzzNext’).style.display=‘none’;
+document.getElementById(‘buzzQ’).textContent=buzzIdx+1;
+document.getElementById(‘buzzBar’).style.width=(buzzIdx/BUZZ.length*100)+’%’;
+buzzAnswered=false;
+}
+function buzzAns(picked){
+if(buzzAnswered)return;
+buzzAnswered=true;
+const q=BUZZ[buzzIdx],correct=picked===q.a;
+if(correct)buzzCorrect++;
+document.getElementById(‘buzzScore’).textContent=buzzCorrect;
+const res=document.getElementById(‘bqResult’);
+res.textContent=(correct?‘✓ Correct! ‘:‘✗ Wrong. ‘)+q.exp;
+res.className=‘bq-result show ‘+(correct?‘ok-r’:‘no-r’);
+document.getElementById(‘btnTrue’).disabled=true;
+document.getElementById(‘btnFalse’).disabled=true;
+document.getElementById(‘btnTrue’).style.opacity=q.a?‘1’:’.35’;
+document.getElementById(‘btnFalse’).style.opacity=q.a?’.35’:‘1’;
+showToast(correct?‘✓ Correct!’:‘✗ Wrong’,correct);
+if(buzzIdx<BUZZ.length-1)document.getElementById(‘buzzNext’).style.display=‘inline-block’;
+else setTimeout(()=>endBuzz(),1200);
+}
+function nextBuzz(){buzzIdx++;renderBuzz();}
+function endBuzz(){
+document.getElementById(‘buzzBar’).style.width=‘100%’;
+document.getElementById(‘buzzSb’).classList.add(‘show’);
+document.getElementById(‘buzzFinal’).textContent=buzzCorrect+’/’+BUZZ.length;
+const msgs=[‘Go back through all activities — every answer is covered.’,‘Keep going — re-read the key tips in each activity.’,‘Good effort! A few concepts to revisit.’,‘Solid work — strong understanding building up.’,‘Great job! Almost perfect.’,‘🎉 Outstanding! Full marks — you have mastered Lecture 7.’];
+document.getElementById(‘buzzMsg’).textContent=msgs[Math.min(Math.floor(buzzCorrect/(BUZZ.length/6)),5)];
+const pct=Math.round(buzzCorrect/BUZZ.length*100);
+recordPartScore(10,‘10’,pct);
+setTimeout(()=>tryUnlockNext(10),400);
+}
+function resetBuzz(){
+buzzIdx=0;buzzCorrect=0;buzzAnswered=false;
+document.getElementById(‘buzzSb’).classList.remove(‘show’);
+document.getElementById(‘buzzScore’).textContent=‘0’;
+document.getElementById(‘buzzBar’).style.width=‘0%’;
+renderBuzz();
+}
+
+/* ═══ INIT ═══ */
+document.addEventListener(‘DOMContentLoaded’,()=>{
+initAllDrag();initTouchDrag();calcGear();calcCS();renderBuzz();
+for(let i=2;i<=10;i++){
+const t=document.getElementById(‘tab’+i);
+if(t&&!actUnlocked[i])t.addEventListener(‘click’,()=>{if(!actUnlocked[i])showToast(‘🔒 Score 80%+ on all parts of Activity ‘+(i-1)+’ to unlock’,false);});
+}
+});
+</script>
+
+</body>
+</html>
